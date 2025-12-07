@@ -11,7 +11,11 @@
 
 ## 📄 Paper & Citation
 
-**Full Paper**: [`docs/paper/geometric_mnemic_manifolds_v22.tex`](docs/paper/geometric_mnemic_manifolds_v22.tex)
+**Full Paper (PDF)**: [`docs/paper/geometric_mnemic_manifolds_v22.pdf`](docs/paper/geometric_mnemic_manifolds_v22.pdf)
+
+**Full Paper (LaTeX)**: [`docs/paper/geometric_mnemic_manifolds_v22.tex`](docs/paper/geometric_mnemic_manifolds_v22.tex)
+
+
 
 **Cite this work**:
 ```bibtex
