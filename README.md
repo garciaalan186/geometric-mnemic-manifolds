@@ -11,7 +11,7 @@
 
 ## 📄 Paper & Citation
 
-**Full Paper**: [`geometric_mnemic_manifolds_v22.tex`](geometric_mnemic_manifolds_v22.tex)
+**Full Paper**: [`docs/paper/geometric_mnemic_manifolds_v22.tex`](docs/paper/geometric_mnemic_manifolds_v22.tex)
 
 **Cite this work**:
 ```bibtex
@@ -27,7 +27,7 @@
 }
 ```
 
-**Alternative citations**: See [CITATION.bib](CITATION.bib) and [CITATION.cff](CITATION.cff)
+**Alternative citations**: See [`docs/citations/CITATION.bib`](docs/citations/CITATION.bib) and [`docs/citations/CITATION.cff`](docs/citations/CITATION.cff)
 
 ---
 
@@ -50,51 +50,61 @@ We propose a novel architecture for simulating the **functional dynamics of auto
 
 ---
 
-## 📚 Repository Contents
+## 📚 Repository Structure
 
-A complete implementation of the Geometric Mnemic Manifold architecture for autonoetic memory in AI systems, plus an interactive Feynman-style explanation.
+A complete, modular implementation of the Geometric Mnemic Manifold architecture following SOLID principles:
 
-## 📚 What's Included
-
-### 1. Interactive Explainer (`gmm_explainer.html`)
-A single-page web application that explains the research paper using clear analogies and conversational language, with interactive JavaScript visualizations:
-
-- **Spiral Visualization**: See how memories are organized on an exponential Kronecker spiral
-- **Hierarchical Structure**: Understand the 3-layer skip-list architecture
-- **Query Animation**: Watch how queries traverse the hierarchy
-- **Benchmark Comparison**: GMM vs HNSW performance visualization
-
-**To use**: Simply open `gmm_explainer.html` in any modern web browser. No server required!
-
-### 2. Working Prototype (`gmm_prototype.py`)
-A fully functional Python implementation featuring:
-
-- **Kronecker Spiral Positioning**: Low-discrepancy geometric organization
-- **Hierarchical Compression**: 3-layer skip-list with telegraphic operators
-- **O(1) Address Calculation**: Zero cold-start latency
-- **Engram Serialization**: Persistent storage system
-- **Synthetic Biography Generator**: Testing without data contamination
-
-### 3. Benchmark Suite (`benchmark_suite.py`)
-Implements the "Needle in the Spiral" experimental protocol:
-
-- **Passkey Retrieval**: Test recall at various memory depths
-- **Time-to-First-Token**: Measure retrieval latency scaling
-- **GMM vs HNSW Comparison**: Empirical validation
-- **Visualization Generator**: Automatic plot generation
+```
+geometric-mnemic-manifolds/
+├── src/gmm/              # Core GMM package (modular, well-organized)
+│   ├── core/             # Engram data structures & main manifold
+│   ├── geometry/         # Spiral positioning & Kronecker sequences
+│   ├── hierarchy/        # Hierarchical compression operators
+│   ├── query/            # Retrieval algorithms
+│   ├── storage/          # Persistent serialization
+│   └── synthesis/        # Synthetic data generation
+├── examples/             # Runnable demonstrations
+│   └── run_prototype.py  # Main prototype demonstration
+├── benchmarks/           # Performance evaluation suite
+│   ├── needle_benchmark.py    # Passkey retrieval tests
+│   ├── epistemic_benchmark.py # Epistemic gap detection
+│   ├── visualizer.py          # Result visualization
+│   └── run_benchmarks.py      # Main benchmark runner
+├── web/                  # Interactive web applications
+│   ├── gmm_explainer.html     # Feynman-style interactive explainer
+│   ├── gmm_visualization_viewer.html  # Manifold data viewer
+│   └── index.html             # Project hub
+├── docs/                 # Documentation & paper
+│   ├── paper/            # LaTeX research paper
+│   ├── guides/           # REPRODUCIBILITY.md, CONTRIBUTING.md, etc.
+│   └── citations/        # CITATION.cff, CITATION.bib, .zenodo.json
+├── setup.py              # Package installation
+├── pyproject.toml        # Modern Python packaging
+└── requirements.txt      # Dependencies
+```
 
 ## 🚀 Quick Start
 
-### Prerequisites
+### Installation
 
 ```bash
-pip install numpy matplotlib
+# Clone the repository
+git clone https://github.com/garciaalan186/geometric-mnemic-manifolds.git
+cd geometric-mnemic-manifolds
+
+# Install the package
+pip install -e .
+
+# Or install with visualization support
+pip install -e ".[viz]"
 ```
 
 ### Running the Prototype
 
-```python
-python gmm_prototype.py
+```bash
+python examples/run_prototype.py
+# Or if installed:
+gmm-prototype
 ```
 
 This will:
@@ -106,8 +116,10 @@ This will:
 
 ### Running Benchmarks
 
-```python
-python benchmark_suite.py
+```bash
+python benchmarks/run_benchmarks.py
+# Or if installed:
+gmm-benchmark
 ```
 
 This will:
@@ -117,14 +129,14 @@ This will:
 4. Generate performance plots
 5. Save results to `./benchmark_results/`
 
-### Viewing the Explainer
+### Viewing the Interactive Explainer
 
 ```bash
 # Just open in browser
-open gmm_explainer.html
+open web/gmm_explainer.html
 
 # Or with Python's built-in server
-python -m http.server 8000
+cd web && python -m http.server 8000
 # Then visit: http://localhost:8000/gmm_explainer.html
 ```
 
@@ -302,30 +314,30 @@ Key contributions:
 
 ## 🔬 Reproducibility
 
-**Full reproducibility guide**: [REPRODUCIBILITY.md](REPRODUCIBILITY.md)
+**Full reproducibility guide**: [`docs/guides/REPRODUCIBILITY.md`](docs/guides/REPRODUCIBILITY.md)
 
 This research is designed to be fully reproducible:
 - ✅ Deterministic algorithms with fixed random seeds
 - ✅ Documented software versions
 - ✅ Synthetic data generation (no contamination)
 - ✅ Open-source implementation
+- ✅ Modular, well-organized codebase following SOLID principles
 
 **Quick verification**:
 ```bash
-# Install exact versions
-pip install numpy==1.24.3 matplotlib==3.7.1
+# Install package
+pip install -e ".[viz]"
 
 # Run all experiments
-python gmm_prototype.py      # ~2-5 seconds
-python benchmark_suite.py    # ~2-5 minutes
-python demo.py               # Interactive
+python examples/run_prototype.py        # ~2-5 seconds
+python benchmarks/run_benchmarks.py     # ~2-5 minutes
 ```
 
-**Expected results**: See [REPRODUCIBILITY.md](REPRODUCIBILITY.md) for detailed benchmarks and validation checksums.
+**Expected results**: See [`docs/guides/REPRODUCIBILITY.md`](docs/guides/REPRODUCIBILITY.md) for detailed benchmarks and validation checksums.
 
 ## 🤝 Contributing
 
-We welcome contributions from the research community! See [CONTRIBUTING.md](CONTRIBUTING.md) for:
+We welcome contributions from the research community! See [`docs/guides/CONTRIBUTING.md`](docs/guides/CONTRIBUTING.md) for:
 - Academic contribution guidelines
 - Code contribution standards
 - Peer review process
@@ -351,9 +363,9 @@ To obtain a permanent DOI for citation:
    - Zenodo automatically archives and issues DOI
 
 2. **Metadata provided**:
-   - `.zenodo.json` - Pre-configured Zenodo metadata
-   - `CITATION.cff` - GitHub citation metadata
-   - `CITATION.bib` - BibTeX citation
+   - `docs/citations/.zenodo.json` - Pre-configured Zenodo metadata
+   - `docs/citations/CITATION.cff` - GitHub citation metadata
+   - `docs/citations/CITATION.bib` - BibTeX citation
 
 3. **Update badges**: After receiving DOI, update README badges with actual DOI
 
@@ -389,12 +401,13 @@ MIT License - See [LICENSE](LICENSE) file for details
 ## 🎓 For Peer Reviewers
 
 **Quick orientation**:
-1. **Paper**: [`geometric_mnemic_manifolds_v22.tex`](geometric_mnemic_manifolds_v22.tex)
-2. **Implementation**: [`gmm_prototype.py`](gmm_prototype.py)
-3. **Experiments**: [`benchmark_suite.py`](benchmark_suite.py)
-4. **Reproducibility**: [REPRODUCIBILITY.md](REPRODUCIBILITY.md)
+1. **Paper**: [`docs/paper/geometric_mnemic_manifolds_v22.tex`](docs/paper/geometric_mnemic_manifolds_v22.tex)
+2. **Implementation**: [`src/gmm/`](src/gmm/) (modular package structure)
+3. **Prototype**: [`examples/run_prototype.py`](examples/run_prototype.py)
+4. **Experiments**: [`benchmarks/run_benchmarks.py`](benchmarks/run_benchmarks.py)
+5. **Reproducibility**: [`docs/guides/REPRODUCIBILITY.md`](docs/guides/REPRODUCIBILITY.md)
 
-**Interactive demo**: Open [`gmm_explainer.html`](gmm_explainer.html) in browser for intuitive understanding
+**Interactive demo**: Open [`web/gmm_explainer.html`](web/gmm_explainer.html) in browser for intuitive understanding
 
 **Verification checklist**:
 - [ ] Theoretical claims (Section 3-4 of paper)
