@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GMM Visualization Viewer</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cutive+Mono&family=Libre+Baskerville:wght@400;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Libre Baskerville', serif;
+            background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+            color: #f4f1e8;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #ffd700;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+        
+        .controls {
+            background: rgba(0,0,0,0.3);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        input[type="file"] {
+            background: #ffd700;
+            color: #0f2027;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Cutive Mono', monospace;
+        }
+        
+        canvas {
+            background: rgba(0,0,0,0.4);
+            border: 2px solid #ffd700;
+            border-radius: 10px;
+            display: block;
+            margin: 0 auto 20px;
+            cursor: crosshair;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-box {
+            background: rgba(0,0,0,0.4);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #4a9eff;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #ffd700;
+            font-family: 'Cutive Mono', monospace;
+        }
+        
+        .stat-label {
+            font-size: 0.9em;
+            color: #f4f1e8;
+            margin-top: 5px;
+        }
+        
+        .legend {
+            background: rgba(0,0,0,0.3);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .legend-item {
+            display: inline-flex;
+            align-items: center;
+            margin-right: 20px;
+            margin-bottom: 10px;
+        }
+        
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        
+        .tooltip {
+            position: absolute;
+            background: rgba(0,0,0,0.9);
+            color: #ffd700;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: 'Cutive Mono', monospace;
+            font-size: 0.85em;
+            pointer-events: none;
+            display: none;
+            border: 1px solid #ffd700;
+            max-width: 300px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>GMM Manifold Visualization Viewer</h1>
+        
+        <div class="controls">
+            <label for="fileInput">Load gmm_visualization.json: </label>
+            <input type="file" id="fileInput" accept=".json">
+        </div>
+        
+        <div class="stats" id="stats"></div>
+        
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color" style="background: #ffd700;"></div>
+                <span>Layer 0: Fovea (Raw Memories)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #4a9eff;"></div>
+                <span>Layer 1: Para-fovea (Patterns)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #ff8c42;"></div>
+                <span>Layer 2: Periphery (Abstracts)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #ff6b6b;"></div>
+                <span>Current Agent (Center)</span>
+            </div>
+        </div>
+        
+        <canvas id="spiralCanvas" width="900" height="900"></canvas>
+        
+        <div id="tooltip" class="tooltip"></div>
+    </div>
+    
+    <script>
+        const canvas = document.getElementById('spiralCanvas');
+        const ctx = canvas.getContext('2d');
+        const tooltip = document.getElementById('tooltip');
+        const statsDiv = document.getElementById('stats');
+        
+        let vizData = null;
+        let hoveredPoint = null;
+        
+        // File input handler
+        document.getElementById('fileInput').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    try {
+                        vizData = JSON.parse(event.target.result);
+                        displayStats();
+                        drawSpiral();
+                    } catch (error) {
+                        alert('Error parsing JSON: ' + error.message);
+                    }
+                };
+                reader.readAsText(file);
+            }
+        });
+        
+        function displayStats() {
+            if (!vizData || !vizData.stats) return;
+            
+            const stats = vizData.stats;
+            
+            statsDiv.innerHTML = `
+                <div class="stat-box">
+                    <div class="stat-value">${stats.layer0_size || 0}</div>
+                    <div class="stat-label">Layer 0 (Raw)</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value">${stats.layer1_size || 0}</div>
+                    <div class="stat-label">Layer 1 (Patterns)</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value">${stats.layer2_size || 0}</div>
+                    <div class="stat-label">Layer 2 (Abstract)</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value">${stats.compression_ratio?.toFixed(1) || 0}x</div>
+                    <div class="stat-label">Compression Ratio</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value">${stats.average_query_time ? (stats.average_query_time * 1000).toFixed(1) : 0}ms</div>
+                    <div class="stat-label">Avg Query Time</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value">${stats.storage_size_mb?.toFixed(2) || 0} MB</div>
+                    <div class="stat-label">Storage Size</div>
+                </div>
+            `;
+        }
+        
+        function drawSpiral() {
+            if (!vizData) return;
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            
+            // Find max radius for scaling
+            const positions = vizData.spiral_positions || [];
+            const maxRadius = Math.max(...positions.map(p => Math.sqrt(p.x*p.x + p.y*p.y)), 1);
+            const scale = (Math.min(canvas.width, canvas.height) / 2 - 50) / maxRadius;
+            
+            // Draw grid circles
+            ctx.strokeStyle = 'rgba(255, 215, 0, 0.1)';
+            ctx.lineWidth = 1;
+            for (let i = 1; i <= 3; i++) {
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, (maxRadius * scale * i) / 3, 0, Math.PI * 2);
+                ctx.stroke();
+            }
+            
+            // Draw spiral path
+            if (positions.length > 1) {
+                ctx.strokeStyle = 'rgba(74, 158, 255, 0.2)';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                positions.forEach((pos, i) => {
+                    const x = centerX + pos.x * scale;
+                    const y = centerY + pos.y * scale;
+                    if (i === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                });
+                ctx.stroke();
+            }
+            
+            // Draw memory points
+            positions.forEach(pos => {
+                const x = centerX + pos.x * scale;
+                const y = centerY + pos.y * scale;
+                
+                // Color by layer
+                let color;
+                if (pos.layer === 0) color = '#ffd700';      // Gold - fovea
+                else if (pos.layer === 1) color = '#4a9eff'; // Blue - para-fovea
+                else color = '#ff8c42';                       // Orange - periphery
+                
+                ctx.fillStyle = color;
+                ctx.beginPath();
+                ctx.arc(x, y, 4, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Highlight if hovered
+                if (hoveredPoint && hoveredPoint.id === pos.id) {
+                    ctx.strokeStyle = '#ffffff';
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.arc(x, y, 8, 0, Math.PI * 2);
+                    ctx.stroke();
+                }
+            });
+            
+            // Draw agent at center
+            ctx.fillStyle = '#ff6b6b';
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, 10, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = '#f4f1e8';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            
+            // Add center label
+            ctx.fillStyle = '#f4f1e8';
+            ctx.font = '14px Cutive Mono';
+            ctx.textAlign = 'center';
+            ctx.fillText('NOW', centerX, centerY + 30);
+        }
+        
+        // Mouse interaction
+        canvas.addEventListener('mousemove', (e) => {
+            if (!vizData) return;
+            
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            const mouseY = e.clientY - rect.top;
+            
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const positions = vizData.spiral_positions || [];
+            const maxRadius = Math.max(...positions.map(p => Math.sqrt(p.x*p.x + p.y*p.y)), 1);
+            const scale = (Math.min(canvas.width, canvas.height) / 2 - 50) / maxRadius;
+            
+            // Find nearest point
+            let nearest = null;
+            let minDist = Infinity;
+            
+            positions.forEach(pos => {
+                const x = centerX + pos.x * scale;
+                const y = centerY + pos.y * scale;
+                const dist = Math.sqrt((mouseX - x) ** 2 + (mouseY - y) ** 2);
+                
+                if (dist < 10 && dist < minDist) {
+                    minDist = dist;
+                    nearest = pos;
+                }
+            });
+            
+            if (nearest) {
+                hoveredPoint = nearest;
+                
+                // Show tooltip
+                const layerData = vizData.layers[nearest.layer];
+                const engram = layerData ? layerData.find(e => e.id === nearest.id) : null;
+                
+                tooltip.style.display = 'block';
+                tooltip.style.left = (e.clientX + 10) + 'px';
+                tooltip.style.top = (e.clientY + 10) + 'px';
+                tooltip.innerHTML = `
+                    <strong>Memory ${nearest.id}</strong><br>
+                    Layer: ${nearest.layer}<br>
+                    Radius: ${nearest.radius.toFixed(2)}<br>
+                    ${engram ? `<br>${engram.context_preview}` : ''}
+                `;
+                
+                drawSpiral();
+            } else {
+                hoveredPoint = null;
+                tooltip.style.display = 'none';
+                drawSpiral();
+            }
+        });
+        
+        canvas.addEventListener('mouseleave', () => {
+            tooltip.style.display = 'none';
+            hoveredPoint = null;
+            drawSpiral();
+        });
+        
+        // Initial message
+        ctx.fillStyle = '#f4f1e8';
+        ctx.font = '20px Libre Baskerville';
+        ctx.textAlign = 'center';
+        ctx.fillText('Load gmm_visualization.json to view manifold', canvas.width/2, canvas.height/2);
+    </script>
+</body>
+</html>
