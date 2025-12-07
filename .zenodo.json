@@ -1,0 +1,51 @@
+{
+  "title": "Geometric Mnemic Manifolds: A Foveated Architecture for Autonoetic Memory in LLMs",
+  "description": "A novel architecture for simulating the functional dynamics of autonoetic memory in AI systems. This system departs from the industry standard of stochastic Vector Databases by introducing the Geometric Mnemic Manifold, where a Recursive Reasoning Kernel (RRK) acts as a fluid reasoning engine, offloading long-term memory to a distributed graph of immutable Engrams organized along a deterministic, low-discrepancy trajectory utilizing Kronecker sequences.",
+  "version": "1.0.0",
+  "upload_type": "software",
+  "publication_date": "2025-12-07",
+  "creators": [
+    {
+      "name": "Garcia, Alan",
+      "affiliation": "",
+      "orcid": "0000-0000-0000-0000"
+    }
+  ],
+  "access_right": "open",
+  "license": "MIT",
+  "keywords": [
+    "artificial intelligence",
+    "memory systems",
+    "geometric topology",
+    "autonoetic memory",
+    "vector databases",
+    "RAG systems",
+    "Kronecker sequences",
+    "hierarchical compression",
+    "O(1) retrieval",
+    "machine learning",
+    "LLMs",
+    "episodic memory",
+    "temporal reasoning"
+  ],
+  "related_identifiers": [
+    {
+      "identifier": "https://github.com/garciaalan186/geometric-mnemic-manifolds",
+      "relation": "isSupplementTo",
+      "scheme": "url"
+    }
+  ],
+  "contributors": [],
+  "references": [
+    "Tulving, E. (1985). Memory and consciousness. Canadian Psychology, 26(1), 1-12.",
+    "Park, J. S., et al. (2023). Generative Agents: Interactive Simulacra of Human Behavior. UIST."
+  ],
+  "communities": [
+    {
+      "identifier": "machine-learning"
+    },
+    {
+      "identifier": "artificial-intelligence"
+    }
+  ]
+}

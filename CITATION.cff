@@ -1,0 +1,43 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: >-
+  Geometric Mnemic Manifolds: A Foveated Architecture for
+  Autonoetic Memory in LLMs
+message: >-
+  If you use this software or reference this research,
+  please cite it using the metadata from this file.
+type: software
+authors:
+  - given-names: Alan
+    family-names: Garcia
+    email: your.email@example.com
+    orcid: 'https://orcid.org/0000-0000-0000-0000'
+repository-code: 'https://github.com/garciaalan186/geometric-mnemic-manifolds'
+abstract: >-
+  A novel architecture for simulating the functional dynamics of
+  autonoetic memory in AI systems. This system departs from the
+  industry standard of stochastic Vector Databases by introducing
+  the Geometric Mnemic Manifold, where a Recursive Reasoning Kernel
+  (RRK) acts as a fluid reasoning engine, offloading long-term memory
+  to a distributed graph of immutable Engrams. The architecture
+  organizes engrams along a deterministic, low-discrepancy trajectory
+  utilizing Kronecker sequences on the hypersphere, achieving O(1)
+  constant-time addressing and O(log N) semantic traversal while
+  eliminating the "Cold Start" latency problem inherent in graph-based
+  indexing.
+keywords:
+  - artificial intelligence
+  - memory systems
+  - geometric topology
+  - autonoetic memory
+  - vector databases
+  - RAG systems
+  - Kronecker sequences
+  - hierarchical compression
+  - O(1) retrieval
+  - machine learning
+license: MIT
+version: 1.0.0
+date-released: '2025-12-07'
