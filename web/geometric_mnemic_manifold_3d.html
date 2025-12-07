@@ -1,0 +1,1103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geometric Mnemic Manifold — Interactive 3D Visualization</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --bg-void: #0a0a0f;
+            --bg-deep: #12121a;
+            --accent-fovea: #00ffaa;
+            --accent-para: #ff6b35;
+            --accent-periph: #7b68ee;
+            --accent-kernel: #00d4ff;
+            --accent-signal: #ffdd00;
+            --text-primary: #e8e8ec;
+            --text-dim: #6a6a7a;
+            --glass: rgba(18, 18, 26, 0.85);
+            --border-glow: rgba(0, 255, 170, 0.3);
+        }
+        
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background: var(--bg-void);
+            color: var(--text-primary);
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+        }
+        
+        #canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+        
+        .ui-overlay {
+            position: fixed;
+            z-index: 100;
+            pointer-events: none;
+        }
+        
+        .ui-overlay > * {
+            pointer-events: auto;
+        }
+        
+        /* Header */
+        .header {
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 24px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            background: linear-gradient(180deg, rgba(10,10,15,0.95) 0%, transparent 100%);
+        }
+        
+        .title-block h1 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, var(--accent-fovea), var(--accent-kernel));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .title-block .subtitle {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            margin-top: 4px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+        
+        .phase-indicator {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        
+        .phase-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--text-dim);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            cursor: pointer;
+        }
+        
+        .phase-dot.active {
+            background: var(--accent-fovea);
+            box-shadow: 0 0 20px var(--accent-fovea);
+            transform: scale(1.3);
+        }
+        
+        .phase-dot:hover {
+            transform: scale(1.2);
+        }
+        
+        /* Side Panel */
+        .side-panel {
+            top: 100px;
+            left: 24px;
+            width: 320px;
+            max-height: calc(100vh - 200px);
+            overflow-y: auto;
+        }
+        
+        .panel-card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-glow);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+        
+        .panel-card h3 {
+            font-size: 0.75rem;
+            font-weight: 500;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--accent-fovea);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .panel-card h3::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: currentColor;
+            border-radius: 1px;
+            transform: rotate(45deg);
+        }
+        
+        .phase-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .phase-desc {
+            font-size: 0.85rem;
+            line-height: 1.6;
+            color: var(--text-dim);
+        }
+        
+        /* Legend */
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            font-size: 0.8rem;
+        }
+        
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+        }
+        
+        .legend-color.fovea { background: var(--accent-fovea); box-shadow: 0 0 10px var(--accent-fovea); }
+        .legend-color.para { background: var(--accent-para); box-shadow: 0 0 10px var(--accent-para); }
+        .legend-color.periph { background: var(--accent-periph); box-shadow: 0 0 10px var(--accent-periph); }
+        .legend-color.kernel { background: var(--accent-kernel); box-shadow: 0 0 10px var(--accent-kernel); }
+        .legend-color.signal { background: var(--accent-signal); box-shadow: 0 0 10px var(--accent-signal); }
+        
+        /* Controls */
+        .controls {
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 12px;
+        }
+        
+        .btn {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            padding: 12px 24px;
+            border: 1px solid var(--border-glow);
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            color: var(--text-primary);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+        
+        .btn:hover {
+            background: var(--accent-fovea);
+            color: var(--bg-void);
+            border-color: var(--accent-fovea);
+            box-shadow: 0 0 30px rgba(0, 255, 170, 0.4);
+        }
+        
+        .btn.active {
+            background: var(--accent-fovea);
+            color: var(--bg-void);
+        }
+        
+        /* Stats Panel */
+        .stats-panel {
+            top: 100px;
+            right: 24px;
+            width: 240px;
+        }
+        
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        
+        .stat-row:last-child {
+            border-bottom: none;
+        }
+        
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+        }
+        
+        .stat-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--accent-fovea);
+        }
+        
+        /* Tooltip */
+        .tooltip {
+            position: fixed;
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-glow);
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-size: 0.8rem;
+            pointer-events: none;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.2s ease;
+            z-index: 1000;
+            max-width: 250px;
+        }
+        
+        .tooltip.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .tooltip-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .tooltip-content {
+            color: var(--text-dim);
+            font-size: 0.75rem;
+            line-height: 1.5;
+        }
+        
+        /* Process Flow */
+        .process-flow {
+            bottom: 100px;
+            right: 24px;
+            width: 240px;
+        }
+        
+        .flow-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 10px 0;
+            opacity: 0.4;
+            transition: all 0.4s ease;
+        }
+        
+        .flow-step.active {
+            opacity: 1;
+        }
+        
+        .flow-step.completed {
+            opacity: 0.7;
+        }
+        
+        .flow-number {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--bg-void);
+            border: 1px solid var(--text-dim);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            flex-shrink: 0;
+            transition: all 0.4s ease;
+        }
+        
+        .flow-step.active .flow-number {
+            background: var(--accent-fovea);
+            border-color: var(--accent-fovea);
+            color: var(--bg-void);
+            box-shadow: 0 0 20px var(--accent-fovea);
+        }
+        
+        .flow-step.completed .flow-number {
+            background: var(--accent-kernel);
+            border-color: var(--accent-kernel);
+            color: var(--bg-void);
+        }
+        
+        .flow-text {
+            font-size: 0.75rem;
+            line-height: 1.4;
+        }
+        
+        .flow-text strong {
+            display: block;
+            margin-bottom: 2px;
+        }
+        
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--text-dim);
+            border-radius: 2px;
+        }
+        
+        /* Animations */
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        
+        .pulse {
+            animation: pulse 2s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body>
+    <div id="canvas-container"></div>
+    
+    <!-- Header -->
+    <div class="ui-overlay header">
+        <div class="title-block">
+            <h1>Geometric Mnemic Manifold</h1>
+            <div class="subtitle">Foveated Architecture for Autonoetic Memory</div>
+        </div>
+        <div class="phase-indicator">
+            <div class="phase-dot active" data-phase="0" title="Engram Storage"></div>
+            <div class="phase-dot" data-phase="1" title="Query Processing"></div>
+            <div class="phase-dot" data-phase="2" title="Pattern Broadcast"></div>
+            <div class="phase-dot" data-phase="3" title="Foveal Check"></div>
+            <div class="phase-dot" data-phase="4" title="Drill-Down"></div>
+            <div class="phase-dot" data-phase="5" title="Synthesis"></div>
+        </div>
+    </div>
+    
+    <!-- Side Panel -->
+    <div class="ui-overlay side-panel">
+        <div class="panel-card">
+            <h3>Current Phase</h3>
+            <div class="phase-title" id="phase-title">Manifold Overview</div>
+            <div class="phase-desc" id="phase-desc">
+                Engrams are distributed along a Kronecker sequence on the hypersphere. The exponential radial function creates natural temporal foveation—recent memories cluster at the center while older ones spiral outward.
+            </div>
+        </div>
+        
+        <div class="panel-card">
+            <h3>Memory Layers</h3>
+            <div class="legend-item">
+                <div class="legend-color fovea"></div>
+                <span>Fovea (L0) — Raw Episodic Engrams</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color para"></div>
+                <span>Para-Fovea (L1) — Synthesized Patterns</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color periph"></div>
+                <span>Periphery (L2) — Semantic Axioms</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color kernel"></div>
+                <span>RRK — Recursive Reasoning Kernel</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color signal"></div>
+                <span>Neural Bus Signal</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Stats Panel -->
+    <div class="ui-overlay stats-panel">
+        <div class="panel-card">
+            <h3>Manifold Statistics</h3>
+            <div class="stat-row">
+                <span class="stat-label">Total Engrams</span>
+                <span class="stat-value" id="stat-engrams">256</span>
+            </div>
+            <div class="stat-row">
+                <span class="stat-label">Fovea (k &lt; 10)</span>
+                <span class="stat-value" id="stat-fovea">10</span>
+            </div>
+            <div class="stat-row">
+                <span class="stat-label">Para-Fovea (L1)</span>
+                <span class="stat-value" id="stat-para">4</span>
+            </div>
+            <div class="stat-row">
+                <span class="stat-label">Periphery (L2)</span>
+                <span class="stat-value" id="stat-periph">1</span>
+            </div>
+            <div class="stat-row">
+                <span class="stat-label">Active Edges</span>
+                <span class="stat-value" id="stat-edges">O(1)</span>
+            </div>
+            <div class="stat-row">
+                <span class="stat-label">Retrieval Time</span>
+                <span class="stat-value" id="stat-time">O(log N)</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Process Flow -->
+    <div class="ui-overlay process-flow">
+        <div class="panel-card">
+            <h3>Retrieval Process</h3>
+            <div class="flow-step active" id="step-0">
+                <div class="flow-number">1</div>
+                <div class="flow-text">
+                    <strong>Query Arrives</strong>
+                    RRK detects epistemic gap
+                </div>
+            </div>
+            <div class="flow-step" id="step-1">
+                <div class="flow-number">2</div>
+                <div class="flow-text">
+                    <strong>Signal Bus</strong>
+                    &lt;SIGNAL_BUS&gt; token emitted
+                </div>
+            </div>
+            <div class="flow-step" id="step-2">
+                <div class="flow-number">3</div>
+                <div class="flow-text">
+                    <strong>Pattern Broadcast</strong>
+                    Query sent to Layer 1 ring
+                </div>
+            </div>
+            <div class="flow-step" id="step-3">
+                <div class="flow-number">4</div>
+                <div class="flow-text">
+                    <strong>Foveal Check</strong>
+                    Scan recent engrams (k &lt; 10)
+                </div>
+            </div>
+            <div class="flow-step" id="step-4">
+                <div class="flow-number">5</div>
+                <div class="flow-text">
+                    <strong>Drill-Down</strong>
+                    Retrieve from resonant L1 node
+                </div>
+            </div>
+            <div class="flow-step" id="step-5">
+                <div class="flow-number">6</div>
+                <div class="flow-text">
+                    <strong>Synthesis</strong>
+                    RRK integrates retrieved context
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Controls -->
+    <div class="ui-overlay controls">
+        <button class="btn active" id="btn-auto">Auto Play</button>
+        <button class="btn" id="btn-prev">◀ Prev</button>
+        <button class="btn" id="btn-next">Next ▶</button>
+        <button class="btn" id="btn-reset">Reset</button>
+        <button class="btn" id="btn-recenter">⌖ Recenter</button>
+    </div>
+    
+    <!-- Tooltip -->
+    <div class="tooltip" id="tooltip">
+        <div class="tooltip-title"></div>
+        <div class="tooltip-content"></div>
+    </div>
+
+    <script>
+        // ==================== THREE.JS SCENE SETUP ====================
+        const container = document.getElementById('canvas-container');
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.setClearColor(0x0a0a0f, 1);
+        container.appendChild(renderer.domElement);
+        
+        camera.position.set(0, 15, 25);
+        camera.lookAt(0, 0, 0);
+        
+        // ==================== COLORS ====================
+        const COLORS = {
+            fovea: 0x00ffaa,
+            para: 0xff6b35,
+            periph: 0x7b68ee,
+            kernel: 0x00d4ff,
+            signal: 0xffdd00,
+            connection: 0x2a2a3a,
+            activeConnection: 0x00ffaa
+        };
+        
+        // ==================== CONFIGURATION ====================
+        const CONFIG = {
+            numEngrams: 256,
+            foveaK: 10,
+            paraK: 64,
+            lambda: 0.015,
+            phi: (1 + Math.sqrt(5)) / 2, // Golden ratio
+            primes: [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]
+        };
+        
+        // ==================== ENGRAM DATA ====================
+        const engrams = [];
+        const engramMeshes = [];
+        const connections = [];
+        const connectionLines = [];
+        
+        // Generate Kronecker sequence positions
+        function kroneckerPosition(k) {
+            const alpha1 = Math.sqrt(2);
+            const alpha2 = Math.sqrt(3);
+            const alpha3 = Math.sqrt(5);
+            
+            const theta = 2 * Math.PI * ((k * alpha1) % 1);
+            const phi = Math.acos(1 - 2 * ((k * alpha2) % 1));
+            const r = Math.exp(CONFIG.lambda * k) * 2;
+            
+            return {
+                x: r * Math.sin(phi) * Math.cos(theta),
+                y: r * Math.cos(phi),
+                z: r * Math.sin(phi) * Math.sin(theta),
+                r: r,
+                theta: theta,
+                phi: phi
+            };
+        }
+        
+        function getEngramLayer(k) {
+            if (k < CONFIG.foveaK) return 0; // Fovea
+            if (k < CONFIG.paraK) return 1;  // Para-fovea
+            return 2; // Periphery
+        }
+        
+        function getLayerColor(layer) {
+            switch(layer) {
+                case 0: return COLORS.fovea;
+                case 1: return COLORS.para;
+                case 2: return COLORS.periph;
+                default: return 0xffffff;
+            }
+        }
+        
+        // ==================== CREATE ENGRAMS ====================
+        function createEngrams() {
+            const geometries = [
+                new THREE.IcosahedronGeometry(0.15, 1), // Fovea - detailed
+                new THREE.OctahedronGeometry(0.2, 0),   // Para - simplified
+                new THREE.TetrahedronGeometry(0.25, 0)  // Periphery - abstract
+            ];
+            
+            for (let k = 0; k < CONFIG.numEngrams; k++) {
+                const pos = kroneckerPosition(k);
+                const layer = getEngramLayer(k);
+                const color = getLayerColor(layer);
+                
+                const material = new THREE.MeshBasicMaterial({
+                    color: color,
+                    transparent: true,
+                    opacity: layer === 0 ? 0.9 : layer === 1 ? 0.7 : 0.5
+                });
+                
+                const mesh = new THREE.Mesh(geometries[layer], material);
+                mesh.position.set(pos.x, pos.y, pos.z);
+                mesh.userData = { k, layer, pos, isActive: false, isHighlighted: false };
+                
+                scene.add(mesh);
+                engramMeshes.push(mesh);
+                engrams.push({ k, layer, pos, mesh });
+            }
+        }
+        
+        // ==================== CREATE KERNEL (RRK) ====================
+        let kernelMesh;
+        let kernelGlow;
+        
+        function createKernel() {
+            const kernelGeo = new THREE.DodecahedronGeometry(0.5, 1);
+            const kernelMat = new THREE.MeshBasicMaterial({
+                color: COLORS.kernel,
+                transparent: true,
+                opacity: 1
+            });
+            kernelMesh = new THREE.Mesh(kernelGeo, kernelMat);
+            kernelMesh.position.set(0, 0, 0);
+            scene.add(kernelMesh);
+            
+            // Glow effect
+            const glowGeo = new THREE.SphereGeometry(0.8, 32, 32);
+            const glowMat = new THREE.MeshBasicMaterial({
+                color: COLORS.kernel,
+                transparent: true,
+                opacity: 0.2
+            });
+            kernelGlow = new THREE.Mesh(glowGeo, glowMat);
+            kernelGlow.position.set(0, 0, 0);
+            scene.add(kernelGlow);
+        }
+        
+        // ==================== CREATE SPIRAL GUIDES ====================
+        function createSpiralGuide() {
+            const points = [];
+            for (let k = 0; k < CONFIG.numEngrams; k++) {
+                const pos = kroneckerPosition(k);
+                points.push(new THREE.Vector3(pos.x, pos.y, pos.z));
+            }
+            
+            const geometry = new THREE.BufferGeometry().setFromPoints(points);
+            const material = new THREE.LineBasicMaterial({
+                color: 0x1a1a2e,
+                transparent: true,
+                opacity: 0.3
+            });
+            
+            const line = new THREE.Line(geometry, material);
+            scene.add(line);
+        }
+        
+        // ==================== CREATE RING BOUNDARIES ====================
+        function createRingBoundaries() {
+            // Fovea boundary
+            const foveaRadius = Math.exp(CONFIG.lambda * CONFIG.foveaK) * 2;
+            const foveaGeo = new THREE.RingGeometry(foveaRadius - 0.1, foveaRadius + 0.1, 64);
+            const foveaMat = new THREE.MeshBasicMaterial({
+                color: COLORS.fovea,
+                transparent: true,
+                opacity: 0.2,
+                side: THREE.DoubleSide
+            });
+            const foveaRing = new THREE.Mesh(foveaGeo, foveaMat);
+            foveaRing.rotation.x = Math.PI / 2;
+            scene.add(foveaRing);
+            
+            // Para boundary
+            const paraRadius = Math.exp(CONFIG.lambda * CONFIG.paraK) * 2;
+            const paraGeo = new THREE.RingGeometry(paraRadius - 0.1, paraRadius + 0.1, 64);
+            const paraMat = new THREE.MeshBasicMaterial({
+                color: COLORS.para,
+                transparent: true,
+                opacity: 0.15,
+                side: THREE.DoubleSide
+            });
+            const paraRing = new THREE.Mesh(paraGeo, paraMat);
+            paraRing.rotation.x = Math.PI / 2;
+            scene.add(paraRing);
+        }
+        
+        // ==================== SIGNAL BEAMS ====================
+        let signalBeams = [];
+        
+        function createSignalBeam(target, color = COLORS.signal) {
+            const points = [
+                new THREE.Vector3(0, 0, 0),
+                target.position.clone()
+            ];
+            
+            const geometry = new THREE.BufferGeometry().setFromPoints(points);
+            const material = new THREE.LineBasicMaterial({
+                color: color,
+                transparent: true,
+                opacity: 0.8,
+                linewidth: 2
+            });
+            
+            const beam = new THREE.Line(geometry, material);
+            beam.userData = { 
+                progress: 0, 
+                target: target,
+                startTime: Date.now()
+            };
+            scene.add(beam);
+            signalBeams.push(beam);
+            return beam;
+        }
+        
+        function clearSignalBeams() {
+            signalBeams.forEach(beam => scene.remove(beam));
+            signalBeams = [];
+        }
+        
+        // ==================== PARTICLES ====================
+        let particles;
+        
+        function createParticles() {
+            const particleCount = 500;
+            const positions = new Float32Array(particleCount * 3);
+            
+            for (let i = 0; i < particleCount; i++) {
+                const theta = Math.random() * Math.PI * 2;
+                const phi = Math.acos(2 * Math.random() - 1);
+                const r = 15 + Math.random() * 10;
+                
+                positions[i * 3] = r * Math.sin(phi) * Math.cos(theta);
+                positions[i * 3 + 1] = r * Math.cos(phi);
+                positions[i * 3 + 2] = r * Math.sin(phi) * Math.sin(theta);
+            }
+            
+            const geometry = new THREE.BufferGeometry();
+            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            
+            const material = new THREE.PointsMaterial({
+                color: 0x2a2a4a,
+                size: 0.05,
+                transparent: true,
+                opacity: 0.6
+            });
+            
+            particles = new THREE.Points(geometry, material);
+            scene.add(particles);
+        }
+        
+        // ==================== PHASE MANAGEMENT ====================
+        let currentPhase = 0;
+        let isAutoPlay = true;
+        let lastPhaseTime = Date.now();
+        const PHASE_DURATION = 3000;
+        
+        const phaseData = [
+            {
+                title: "Manifold Overview",
+                desc: "Engrams are distributed along a Kronecker sequence on the hypersphere. The exponential radial function creates natural temporal foveation—recent memories cluster at the center while older ones spiral outward.",
+                action: () => resetVisualization()
+            },
+            {
+                title: "Query Processing",
+                desc: "The RRK detects an epistemic gap in its context window. The query requires information not present in the current working memory, triggering a <SIGNAL_BUS> token emission.",
+                action: () => showQueryProcessing()
+            },
+            {
+                title: "Pattern Ring Broadcast",
+                desc: "The Neural Bus broadcasts the query vector to all Layer-1 (Para-Fovea) nodes. These synthesized pattern nodes provide logarithmic coverage of the agent's entire semantic history.",
+                action: () => showPatternBroadcast()
+            },
+            {
+                title: "Foveal Check",
+                desc: "Simultaneously, the system scans the dense Fovea (k < 10) for immediate context matches. Recent episodic engrams receive full-resolution queries.",
+                action: () => showFovealCheck()
+            },
+            {
+                title: "Hierarchical Drill-Down",
+                desc: "A Layer-1 node shows high semantic resonance. The system 'drills down' into its constituent children—raw L0 engrams—to retrieve specific episodic details.",
+                action: () => showDrillDown()
+            },
+            {
+                title: "Synthesis & Integration",
+                desc: "The RRK integrates retrieved context with its current state. If conflicts arise, an Ephemeral Clone of the source engram can be spawned for dialectic discourse.",
+                action: () => showSynthesis()
+            }
+        ];
+        
+        function updatePhase(phase) {
+            currentPhase = phase;
+            
+            // Update UI
+            document.getElementById('phase-title').textContent = phaseData[phase].title;
+            document.getElementById('phase-desc').textContent = phaseData[phase].desc;
+            
+            // Update phase dots
+            document.querySelectorAll('.phase-dot').forEach((dot, i) => {
+                dot.classList.toggle('active', i === phase);
+            });
+            
+            // Update flow steps
+            document.querySelectorAll('.flow-step').forEach((step, i) => {
+                step.classList.remove('active', 'completed');
+                if (i < phase) step.classList.add('completed');
+                if (i === phase) step.classList.add('active');
+            });
+            
+            // Execute phase action
+            phaseData[phase].action();
+            lastPhaseTime = Date.now();
+        }
+        
+        // ==================== PHASE VISUALIZATIONS ====================
+        function resetVisualization() {
+            clearSignalBeams();
+            engramMeshes.forEach(mesh => {
+                mesh.material.opacity = mesh.userData.layer === 0 ? 0.9 : 
+                                        mesh.userData.layer === 1 ? 0.7 : 0.5;
+                mesh.scale.set(1, 1, 1);
+            });
+            kernelMesh.material.color.setHex(COLORS.kernel);
+            kernelGlow.material.opacity = 0.2;
+        }
+        
+        function showQueryProcessing() {
+            resetVisualization();
+            kernelMesh.material.color.setHex(COLORS.signal);
+            kernelGlow.material.opacity = 0.5;
+            kernelGlow.material.color.setHex(COLORS.signal);
+        }
+        
+        function showPatternBroadcast() {
+            resetVisualization();
+            
+            // Highlight L1 nodes
+            engramMeshes.forEach(mesh => {
+                if (mesh.userData.layer === 1) {
+                    mesh.material.opacity = 1;
+                    mesh.scale.set(1.5, 1.5, 1.5);
+                    createSignalBeam(mesh, COLORS.para);
+                } else {
+                    mesh.material.opacity = 0.2;
+                }
+            });
+        }
+        
+        function showFovealCheck() {
+            resetVisualization();
+            
+            // Highlight Fovea
+            engramMeshes.forEach(mesh => {
+                if (mesh.userData.layer === 0) {
+                    mesh.material.opacity = 1;
+                    mesh.scale.set(1.3, 1.3, 1.3);
+                    createSignalBeam(mesh, COLORS.fovea);
+                } else {
+                    mesh.material.opacity = 0.3;
+                }
+            });
+        }
+        
+        function showDrillDown() {
+            resetVisualization();
+            
+            // Find a random L1 node and its "children"
+            const l1Nodes = engramMeshes.filter(m => m.userData.layer === 1);
+            const selectedL1 = l1Nodes[Math.floor(Math.random() * l1Nodes.length)];
+            
+            // Highlight selected L1 and nearby L0 nodes
+            engramMeshes.forEach(mesh => {
+                const distance = mesh.position.distanceTo(selectedL1.position);
+                if (mesh === selectedL1) {
+                    mesh.material.opacity = 1;
+                    mesh.scale.set(2, 2, 2);
+                    createSignalBeam(mesh, COLORS.signal);
+                } else if (mesh.userData.layer === 0 && distance < 3) {
+                    mesh.material.opacity = 1;
+                    mesh.scale.set(1.5, 1.5, 1.5);
+                    // Create connection from L1 to L0
+                    const points = [selectedL1.position.clone(), mesh.position.clone()];
+                    const geo = new THREE.BufferGeometry().setFromPoints(points);
+                    const mat = new THREE.LineBasicMaterial({ 
+                        color: COLORS.fovea, 
+                        transparent: true, 
+                        opacity: 0.6 
+                    });
+                    const line = new THREE.Line(geo, mat);
+                    scene.add(line);
+                    signalBeams.push(line);
+                } else {
+                    mesh.material.opacity = 0.15;
+                }
+            });
+        }
+        
+        function showSynthesis() {
+            resetVisualization();
+            
+            // Bring selected data back to kernel
+            kernelMesh.material.color.setHex(COLORS.fovea);
+            kernelGlow.material.color.setHex(COLORS.fovea);
+            kernelGlow.material.opacity = 0.6;
+            
+            // Create return signals
+            const activeEngrams = engramMeshes.filter(m => m.userData.k < 5);
+            activeEngrams.forEach(mesh => {
+                mesh.material.opacity = 1;
+                const points = [mesh.position.clone(), new THREE.Vector3(0, 0, 0)];
+                const geo = new THREE.BufferGeometry().setFromPoints(points);
+                const mat = new THREE.LineBasicMaterial({
+                    color: COLORS.fovea,
+                    transparent: true,
+                    opacity: 0.8
+                });
+                const line = new THREE.Line(geo, mat);
+                scene.add(line);
+                signalBeams.push(line);
+            });
+        }
+        
+        // ==================== CAMERA CONTROLS ====================
+        let isDragging = false;
+        let previousMousePosition = { x: 0, y: 0 };
+        let cameraTheta = 0; // Horizontal angle
+        let cameraPhi = Math.PI / 4; // Vertical angle (start looking down slightly)
+        let cameraRadius = 30; // Fixed distance from center
+        let targetTheta = 0;
+        let targetPhi = Math.PI / 4;
+        let targetRadius = 30;
+        
+        const MIN_RADIUS = 10;
+        const MAX_RADIUS = 60;
+        const MIN_PHI = 0.1;
+        const MAX_PHI = Math.PI - 0.1;
+        
+        container.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            previousMousePosition = { x: e.clientX, y: e.clientY };
+        });
+        
+        container.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            
+            const deltaX = e.clientX - previousMousePosition.x;
+            const deltaY = e.clientY - previousMousePosition.y;
+            
+            targetTheta -= deltaX * 0.005;
+            targetPhi += deltaY * 0.005;
+            targetPhi = Math.max(MIN_PHI, Math.min(MAX_PHI, targetPhi));
+            
+            previousMousePosition = { x: e.clientX, y: e.clientY };
+        });
+        
+        container.addEventListener('mouseup', () => isDragging = false);
+        container.addEventListener('mouseleave', () => isDragging = false);
+        
+        container.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            targetRadius += e.deltaY * 0.03;
+            targetRadius = Math.max(MIN_RADIUS, Math.min(MAX_RADIUS, targetRadius));
+        }, { passive: false });
+        
+        // ==================== UI EVENT HANDLERS ====================
+        document.getElementById('btn-auto').addEventListener('click', function() {
+            isAutoPlay = !isAutoPlay;
+            this.classList.toggle('active', isAutoPlay);
+            this.textContent = isAutoPlay ? 'Auto Play' : 'Manual';
+        });
+        
+        document.getElementById('btn-prev').addEventListener('click', () => {
+            updatePhase((currentPhase - 1 + phaseData.length) % phaseData.length);
+        });
+        
+        document.getElementById('btn-next').addEventListener('click', () => {
+            updatePhase((currentPhase + 1) % phaseData.length);
+        });
+        
+        document.getElementById('btn-reset').addEventListener('click', () => {
+            updatePhase(0);
+        });
+        
+        document.getElementById('btn-recenter').addEventListener('click', () => {
+            targetTheta = 0;
+            targetPhi = Math.PI / 4;
+            targetRadius = 30;
+        });
+        
+        document.querySelectorAll('.phase-dot').forEach(dot => {
+            dot.addEventListener('click', function() {
+                updatePhase(parseInt(this.dataset.phase));
+            });
+        });
+        
+        // ==================== ANIMATION LOOP ====================
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            const time = Date.now() * 0.001;
+            
+            // Smooth camera interpolation
+            cameraTheta += (targetTheta - cameraTheta) * 0.08;
+            cameraPhi += (targetPhi - cameraPhi) * 0.08;
+            cameraRadius += (targetRadius - cameraRadius) * 0.08;
+            
+            // Auto-rotate when not dragging
+            if (!isDragging) {
+                targetTheta += 0.002;
+            }
+            
+            // Calculate camera position using spherical coordinates (always orbits around origin)
+            camera.position.x = cameraRadius * Math.sin(cameraPhi) * Math.sin(cameraTheta);
+            camera.position.y = cameraRadius * Math.cos(cameraPhi);
+            camera.position.z = cameraRadius * Math.sin(cameraPhi) * Math.cos(cameraTheta);
+            camera.lookAt(0, 0, 0);
+            
+            // Animate kernel
+            if (kernelMesh) {
+                kernelMesh.rotation.x += 0.01;
+                kernelMesh.rotation.y += 0.015;
+                kernelGlow.scale.setScalar(1 + Math.sin(time * 2) * 0.1);
+            }
+            
+            // Animate engrams
+            engramMeshes.forEach((mesh, i) => {
+                mesh.rotation.x += 0.005;
+                mesh.rotation.y += 0.003;
+                
+                // Subtle floating
+                const offset = Math.sin(time + i * 0.1) * 0.02;
+                mesh.position.y = mesh.userData.pos.y + offset;
+            });
+            
+            // Animate particles
+            if (particles) {
+                particles.rotation.y += 0.0002;
+            }
+            
+            // Animate signal beams
+            signalBeams.forEach(beam => {
+                beam.material.opacity = 0.3 + Math.sin(time * 5) * 0.3;
+            });
+            
+            // Auto-advance phases
+            if (isAutoPlay && Date.now() - lastPhaseTime > PHASE_DURATION) {
+                updatePhase((currentPhase + 1) % phaseData.length);
+            }
+            
+            renderer.render(scene, camera);
+        }
+        
+        // ==================== WINDOW RESIZE ====================
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+        
+        // ==================== INITIALIZATION ====================
+        function init() {
+            createParticles();
+            createSpiralGuide();
+            createRingBoundaries();
+            createEngrams();
+            createKernel();
+            
+            // Update stats
+            const l1Count = Math.ceil(CONFIG.numEngrams / 64);
+            const l2Count = Math.ceil(CONFIG.numEngrams / 1024);
+            document.getElementById('stat-engrams').textContent = CONFIG.numEngrams;
+            document.getElementById('stat-fovea').textContent = CONFIG.foveaK;
+            document.getElementById('stat-para').textContent = l1Count;
+            document.getElementById('stat-periph').textContent = Math.max(1, l2Count);
+            
+            updatePhase(0);
+            animate();
+        }
+        
+        init();
+    </script>
+</body>
+</html>
