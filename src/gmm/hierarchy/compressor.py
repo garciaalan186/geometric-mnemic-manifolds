@@ -44,6 +44,24 @@ class HierarchicalCompressor:
         self.beta1 = beta1 or self.DEFAULT_BETA1
         self.beta2 = beta2 or self.DEFAULT_BETA2
 
+    def generate_seed_context(self, text: str) -> str:
+        """
+        Generate a compressed seed summary from a context string.
+        used for daisy-chaining engrams.
+        
+        Args:
+            text: Input text
+            
+        Returns:
+            Compressed summary string
+        """
+        # Reuse telegraphic compression logic for now
+        # Limit to fewer tokens for a seed (e.g. 50 chars or 10 words)
+        compressed = self._telegraphic_compress([text])
+        # Force strict truncation for seeds to avoid context bloat
+        words = compressed.split()
+        return " ".join(words[:15])
+
     def compress_to_layer1(self, engrams: List[Engram]) -> List[Engram]:
         """
         Compress raw engrams into pattern-level summaries.

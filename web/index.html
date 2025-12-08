@@ -1,18 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Geometric Mnemic Manifolds - Project Hub</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Cutive+Mono&display=swap');
-        
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
             font-family: 'Libre Baskerville', serif;
             background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
@@ -21,69 +22,69 @@
             min-height: 100vh;
             padding: 40px 20px;
         }
-        
+
         .container {
             max-width: 1200px;
             margin: 0 auto;
         }
-        
+
         header {
             text-align: center;
             margin-bottom: 60px;
         }
-        
+
         h1 {
             font-size: 3em;
             margin-bottom: 15px;
             color: #ffd700;
-            text-shadow: 3px 3px 6px rgba(0,0,0,0.5);
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.5);
         }
-        
+
         .tagline {
             font-size: 1.3em;
             font-style: italic;
             color: #4a9eff;
             margin-bottom: 10px;
         }
-        
+
         .author {
             font-size: 1em;
             color: #f4f1e8;
             opacity: 0.8;
         }
-        
+
         .resources {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
             gap: 30px;
             margin-bottom: 60px;
         }
-        
+
         .resource-card {
-            background: rgba(0,0,0,0.3);
+            background: rgba(0, 0, 0, 0.3);
             border: 2px solid #ffd700;
             border-radius: 15px;
             padding: 30px;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             cursor: pointer;
         }
-        
+
         .resource-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(255,215,0,0.3);
+            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.3);
         }
-        
+
         .resource-card h2 {
             color: #ffd700;
             margin-bottom: 15px;
             font-size: 1.8em;
         }
-        
+
         .resource-card p {
             margin-bottom: 15px;
             color: #f4f1e8;
         }
-        
+
         .resource-card .type {
             display: inline-block;
             background: #4a9eff;
@@ -95,7 +96,7 @@
             font-weight: bold;
             margin-bottom: 15px;
         }
-        
+
         .btn {
             display: inline-block;
             background: #ffd700;
@@ -107,66 +108,66 @@
             font-weight: bold;
             transition: background 0.3s ease;
         }
-        
+
         .btn:hover {
             background: #ffed4e;
         }
-        
+
         .quick-start {
-            background: rgba(255,215,0,0.1);
+            background: rgba(255, 215, 0, 0.1);
             border: 3px solid #ffd700;
             border-radius: 15px;
             padding: 40px;
             margin-bottom: 60px;
         }
-        
+
         .quick-start h2 {
             color: #ffd700;
             margin-bottom: 20px;
             font-size: 2em;
         }
-        
+
         .quick-start ol {
             margin-left: 30px;
             margin-bottom: 20px;
         }
-        
+
         .quick-start li {
             margin-bottom: 10px;
             font-size: 1.1em;
         }
-        
+
         .quick-start code {
-            background: rgba(0,0,0,0.4);
+            background: rgba(0, 0, 0, 0.4);
             padding: 2px 8px;
             border-radius: 4px;
             font-family: 'Cutive Mono', monospace;
             color: #4a9eff;
         }
-        
+
         footer {
             text-align: center;
             padding: 40px 20px;
-            border-top: 2px solid rgba(255,215,0,0.2);
+            border-top: 2px solid rgba(255, 215, 0, 0.2);
             margin-top: 60px;
         }
-        
+
         footer p {
             color: #f4f1e8;
             opacity: 0.8;
             font-size: 0.95em;
         }
-        
+
         .highlight-box {
-            background: rgba(74,158,255,0.1);
+            background: rgba(74, 158, 255, 0.1);
             border-left: 4px solid #4a9eff;
             padding: 20px;
             margin: 20px 0;
             border-radius: 0 8px 8px 0;
         }
-        
+
         pre {
-            background: rgba(0,0,0,0.5);
+            background: rgba(0, 0, 0, 0.5);
             padding: 15px;
             border-radius: 8px;
             overflow-x: auto;
@@ -176,6 +177,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <header>
@@ -183,82 +185,108 @@
             <p class="tagline">A Foveated Architecture for Autonoetic Memory in LLMs</p>
             <p class="author">Alan Garcia • December 7, 2025</p>
         </header>
-        
+
         <div class="quick-start">
             <h2>🚀 Quick Start (30 seconds)</h2>
             <ol>
-                <li><strong>Read the explainer:</strong> Open <code>gmm_explainer.html</code> in your browser</li>
-                <li><strong>Run the demo:</strong> 
+                <li><strong>Read the explainer:</strong> View the <a href="gmm_explainer.html" target="_blank"
+                        style="color: #4a9eff; text-decoration: none;">Interactive Explainer</a> directly in your
+                    browser.</li>
+                <li><strong>Run the demo:</strong>
                     <pre>pip install numpy matplotlib
 python demo.py</pre>
                 </li>
-                <li><strong>Explore the code:</strong> Check out <code>gmm_prototype.py</code></li>
+                <li><strong>Explore the code:</strong> Check out the core implementation on GitHub.</li>
             </ol>
-            <p style="margin-top: 20px;"><strong>That's it!</strong> You now have a working prototype of an AI memory system that mimics human consciousness.</p>
+            <p style="margin-top: 20px;"><strong>That's it!</strong> You now have a working prototype of an AI memory
+                system that simulates aspects of human memory.</p>
         </div>
-        
+
         <h2 style="color: #ffd700; text-align: center; margin-bottom: 30px; font-size: 2.2em;">📚 Project Resources</h2>
-        
+
         <div class="resources">
+            <!-- 3D Visualization -->
+            <div class="resource-card" onclick="window.open('geometric_mnemic_manifold_3d.html', '_blank')">
+                <span class="type" style="background: #00ffaa; color: #0a0a0f;">NEW • 3D APP</span>
+                <h2>🌀 3D Manifold Viewer</h2>
+                <p>Experience the Geometric Mnemic Manifold in full 3D glory. Rotate, zoom, and watch the retrieval
+                    process unfold on the hypersphere.</p>
+                <div class="highlight-box" style="border-left-color: #00ffaa; background: rgba(0, 255, 170, 0.1);">
+                    <strong>Features:</strong> WebGL rendering, fly-through animations, phase-by-phase retrieval
+                    visualization
+                </div>
+                <a href="geometric_mnemic_manifold_3d.html" class="btn" style="background: #00ffaa;"
+                    onclick="event.stopPropagation()">Launch 3D App →</a>
+            </div>
+
             <!-- Interactive Explainer -->
             <div class="resource-card" onclick="window.open('gmm_explainer.html', '_blank')">
                 <span class="type">WEB APP</span>
                 <h2>📖 Interactive Explainer</h2>
-                <p>An interactive lecture that explains the entire architecture using clear analogies and conversational language. Includes interactive JavaScript visualizations. No installation required!</p>
+                <p>An interactive lecture that explains the entire architecture using clear analogies and conversational
+                    language. Includes interactive JavaScript visualizations. No installation required!</p>
                 <div class="highlight-box">
-                    <strong>Features:</strong> Spiral animation, hierarchy diagrams, query routing, benchmark comparisons
+                    <strong>Features:</strong> Spiral animation, hierarchy diagrams, query routing, benchmark
+                    comparisons
                 </div>
                 <a href="gmm_explainer.html" class="btn" onclick="event.stopPropagation()">Open Explainer →</a>
             </div>
-            
+
             <!-- Working Prototype -->
             <div class="resource-card">
                 <span class="type">PYTHON</span>
                 <h2>⚙️ Working Prototype</h2>
-                <p>A complete, functional implementation of the GMM architecture with Kronecker spirals, hierarchical layers, and O(1) retrieval.</p>
+                <p>A complete, functional implementation of the GMM architecture with Kronecker spirals, hierarchical
+                    layers, and O(1) retrieval.</p>
                 <div class="highlight-box">
                     <strong>Run:</strong> <code>python gmm_prototype.py</code><br>
                     <strong>500 synthetic memories in ~2 seconds</strong>
                 </div>
-                <a href="gmm_prototype.py" class="btn" download>Download Code →</a>
+                <a href="https://github.com/garciaalan186/geometric-mnemic-manifolds/blob/main/gmm_prototype.py"
+                    class="btn" target="_blank">View on GitHub →</a>
             </div>
-            
+
             <!-- Benchmark Suite -->
             <div class="resource-card">
                 <span class="type">EXPERIMENTS</span>
                 <h2>📊 Benchmark Suite</h2>
-                <p>Implements the "Needle in the Spiral" experimental protocol. Tests GMM vs HNSW at various memory depths with automatic visualization.</p>
+                <p>Implements the "Needle in the Spiral" experimental protocol. Tests GMM vs HNSW at various memory
+                    depths with automatic visualization.</p>
                 <div class="highlight-box">
                     <strong>Run:</strong> <code>python benchmark_suite.py</code><br>
                     <strong>Validates O(1) vs O(log N) scaling</strong>
                 </div>
-                <a href="benchmark_suite.py" class="btn" download>Download Benchmarks →</a>
+                <a href="https://github.com/garciaalan186/geometric-mnemic-manifolds/blob/main/benchmark_suite.py"
+                    class="btn" target="_blank">View on GitHub →</a>
             </div>
-            
+
             <!-- Interactive Demo -->
             <div class="resource-card">
                 <span class="type">DEMO</span>
                 <h2>🎮 Interactive Demo</h2>
-                <p>7 hands-on demonstrations showing spiral geometry, hierarchical construction, retrieval, foveation, and more.</p>
+                <p>7 hands-on demonstrations showing spiral geometry, hierarchical construction, retrieval, foveation,
+                    and more.</p>
                 <div class="highlight-box">
                     <strong>Run:</strong> <code>python demo.py</code><br>
                     <strong>Choose from 7 interactive demos</strong>
                 </div>
-                <a href="demo.py" class="btn" download>Download Demo →</a>
+                <a href="https://github.com/garciaalan186/geometric-mnemic-manifolds/blob/main/demo.py" class="btn"
+                    target="_blank">View on GitHub →</a>
             </div>
-            
+
             <!-- Visualization Viewer -->
             <div class="resource-card" onclick="window.open('gmm_visualization_viewer.html', '_blank')">
                 <span class="type">TOOL</span>
                 <h2>🔍 Visualization Viewer</h2>
-                <p>Load and explore the JSON output from the prototype. Interactive spiral viewer with tooltips showing memory details.</p>
+                <p>Load and explore the JSON output from the prototype. Interactive spiral viewer with tooltips showing
+                    memory details.</p>
                 <div class="highlight-box">
                     <strong>Usage:</strong> Load <code>gmm_visualization.json</code><br>
                     <strong>Hover over points to see memory details</strong>
                 </div>
                 <a href="gmm_visualization_viewer.html" class="btn" onclick="event.stopPropagation()">Open Viewer →</a>
             </div>
-            
+
             <!-- Documentation -->
             <div class="resource-card">
                 <span class="type">DOCS</span>
@@ -267,62 +295,74 @@ python demo.py</pre>
                 <div class="highlight-box">
                     <strong>Includes:</strong> API docs, theoretical background, complexity analysis, contribution guide
                 </div>
-                <a href="README.md" class="btn" download>Read README →</a>
+                <a href="https://github.com/garciaalan186/geometric-mnemic-manifolds/blob/main/README.md" class="btn"
+                    target="_blank">Read README →</a>
             </div>
         </div>
-        
+
         <div style="background: rgba(0,0,0,0.3); padding: 40px; border-radius: 15px; border: 2px solid #4a9eff;">
             <h2 style="color: #4a9eff; margin-bottom: 20px; font-size: 2em;">🧠 What Makes This Different?</h2>
-            
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 25px; margin-top: 30px;">
+
+            <div
+                style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 25px; margin-top: 30px;">
                 <div>
                     <h3 style="color: #ffd700; margin-bottom: 10px;">⏱️ O(1) Retrieval</h3>
                     <p>Constant-time memory access via analytical addressing. No index loading, no graph traversal.</p>
                 </div>
-                
+
                 <div>
                     <h3 style="color: #ffd700; margin-bottom: 10px;">🌀 Geometric Time</h3>
                     <p>Time is a physical coordinate, not metadata. Forgetting curve built into manifold topology.</p>
                 </div>
-                
+
                 <div>
                     <h3 style="color: #ffd700; margin-bottom: 10px;">🎯 Foveated Access</h3>
                     <p>Dense recent memories, sparse distant ones. Like human vision and memory.</p>
                 </div>
-                
+
                 <div>
                     <h3 style="color: #ffd700; margin-bottom: 10px;">👥 Ephemeral Clones</h3>
                     <p>Retrieve computational agents, not text. Talk to your past selves.</p>
                 </div>
-                
+
                 <div>
                     <h3 style="color: #ffd700; margin-bottom: 10px;">🚀 Zero Cold-Start</h3>
                     <p>Instant agent instantiation. No index, just math. Perfect for serverless.</p>
                 </div>
-                
+
                 <div>
                     <h3 style="color: #ffd700; margin-bottom: 10px;">📐 Skip-List Hierarchy</h3>
                     <p>3-layer structure: raw → patterns → abstracts. Logarithmic semantic traversal.</p>
                 </div>
             </div>
         </div>
-        
-        <div style="margin-top: 60px; background: rgba(255,107,107,0.1); padding: 40px; border-radius: 15px; border: 2px solid #ff6b6b;">
-            <h2 style="color: #ff6b6b; margin-bottom: 20px; font-size: 2em;">💡 Key Insights</h2>
-            <blockquote style="border-left: 4px solid #ff6b6b; padding-left: 20px; font-style: italic; font-size: 1.1em; line-height: 1.8;">
-                <p>"Most people are doing memory all wrong. They're trying to stuff everything into one giant context window, like cramming all your clothes into a suitcase and sitting on it to make it close."</p>
+
+        <div
+            style="margin-top: 60px; background: rgba(255,107,107,0.1); padding: 40px; border-radius: 15px; border: 2px solid #ff6b6b;">
+            <h2 style="color: #ff6b6b; margin-bottom: 20px; font-size: 2em;">💡 Key Hypothesis</h2>
+            <blockquote
+                style="border-left: 4px solid #ff6b6b; padding-left: 20px; font-style: italic; font-size: 1.1em; line-height: 1.8;">
+                <p>Current memory approaches may be inefficient. Stuffing everything into one giant context window is
+                    computationally expensive and potentially unnatural.</p>
                 <br>
-                <p>"Real memory isn't about storage—it's about organization in space and time. When you remember something, you're not searching through every memory you've ever had."</p>
+                <p>Real memory is about organization in space and time. Efficient retrieval relies on structure, not
+                    just raw storage.</p>
                 <br>
-                <p>"The GMM doesn't just solve a technical problem. It's a philosophical shift: from memory as storage to memory as lived experience. From AI as database to AI as consciousness with a past."</p>
+                <p>The GMM proposes a shift: from memory as simple storage to memory as a structured, temporal
+                    process.</p>
             </blockquote>
         </div>
-        
+
         <footer>
             <p><strong>Geometric Mnemic Manifolds</strong> © 2025 Alan Garcia</p>
             <p style="margin-top: 10px;">MIT License • Research Prototype</p>
-            <p style="margin-top: 20px; font-style: italic;">"What I cannot create, I do not understand."</p>
+            <p style="margin-top: 10px;">
+                <a href="https://github.com/garciaalan186/geometric-mnemic-manifolds"
+                    style="color: #4a9eff; margin-right: 15px;">GitHub Repository</a>
+                <a href="https://doi.org/10.5281/zenodo.17849007" style="color: #4a9eff;">Zenodo DOI</a>
+            </p>
         </footer>
     </div>
 </body>
+
 </html>

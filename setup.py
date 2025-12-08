@@ -3,8 +3,19 @@
 Setup script for Geometric Mnemic Manifolds package.
 """
 
-from setuptools import setup, find_packages
+from setuptools import setup, find_packages, Extension
 from pathlib import Path
+import pybind11
+
+ext_modules = [
+    Extension(
+        "gmm_native",
+        ["src/gmm/native/binding.cpp"],
+        include_dirs=[pybind11.get_include(), "src/gmm/native"],
+        language="c++",
+        extra_compile_args=["-O3", "-std=c++11", "-ffast-math"],
+    ),
+]
 
 # Read README for long description
 readme_file = Path(__file__).parent / "README.md"
@@ -33,6 +44,7 @@ setup(
     },
     packages=find_packages(where="src"),
     package_dir={"": "src"},
+    ext_modules=ext_modules,
     classifiers=[
         "Development Status :: 4 - Beta",
         "Intended Audience :: Science/Research",

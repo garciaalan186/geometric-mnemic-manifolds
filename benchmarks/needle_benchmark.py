@@ -8,13 +8,17 @@ Tests GMM retrieval performance across various memory depths.
 import sys
 import numpy as np
 import time
-from typing import List, Dict
+import json
 from pathlib import Path
+from typing import List, Dict, Any
 
 # Add src to path
-sys.path.insert(0, str(Path(__file__).parent.parent / 'src'))
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from gmm import GeometricMnemicManifold, SyntheticBiographyGenerator
+from src.gmm.core.manifold import GeometricMnemicManifold
+from src.gmm.core.engram import Engram
+from src.gmm import SyntheticBiographyGenerator
+from baselines.hnsw import HNSWIndex
 
 
 class NeedleInSpiralBenchmark:
@@ -45,7 +49,8 @@ class NeedleInSpiralBenchmark:
     def run_passkey_retrieval_test(self,
                                    depths: List[int] = [100, 1000, 10000],
                                    num_trials: int = 10,
-                                   embedding_dim: int = 128) -> Dict:
+                                   embedding_dim: int = 128,
+                                   gmm_params: Dict[str, Any] = None) -> Dict:
         """
         Test passkey retrieval at various memory depths.
 
@@ -83,25 +88,43 @@ class NeedleInSpiralBenchmark:
                     passkey_depth=int(depth * 0.5)  # Middle of history
                 )
 
-                # Create GMM and populate
-                gmm = GeometricMnemicManifold(
+                # Create GMM and HNSW
+                gmm_kwargs = {
+                    'embedding_dim': embedding_dim,
+                    'lambda_decay': 0.01 / np.log(depth + 1),
+                    'beta1': 64,
+                    'beta2': 16,
+                    'foveal_beta': 1.1  # Distributed fovea (10% decay)
+                }
+                if gmm_params:
+                    gmm_kwargs.update(gmm_params)
+                    
+                gmm = GeometricMnemicManifold(**gmm_kwargs)
+                
+                hnsw = HNSWIndex(
                     embedding_dim=embedding_dim,
-                    lambda_decay=0.01 / np.log(depth + 1),  # Scale with depth
-                    beta1=64,
-                    beta2=16
+                    m=16,
+                    ef_construction=200
                 )
 
                 # Add all events
-                for event in events:
+                for i, event in enumerate(events):
                     emb = self._simple_embedding(event, dim=embedding_dim)
+                    # Add to GMM
                     gmm.add_engram(
                         context_window=event,
                         embedding=emb,
                         metadata={'original': event}
                     )
+                    # Add to HNSW (requires explicit index)
+                    hnsw.add_item(emb, i)
 
                 # Query for passkey
                 passkey_embedding = self._simple_embedding(passkey, dim=embedding_dim)
+
+                # Pre-warm GMM matrices (measure pure retrieval speed)
+                if hasattr(gmm, '_update_matrices'):
+                    gmm._update_matrices()
 
                 # Test GMM
                 gmm_start = time.time()
@@ -114,9 +137,21 @@ class NeedleInSpiralBenchmark:
                 depth_results['gmm_times'].append(gmm_time)
                 depth_results['gmm_recall'].append(1.0 if gmm_found else 0.0)
 
-                # Simulate HNSW (O(log N) traversal + index overhead)
-                hnsw_time = self._simulate_hnsw_retrieval(depth)
-                hnsw_found = np.random.rand() > 0.05  # 95% recall (optimistic)
+                # Test HNSW (Real retrieval)
+                hnsw_start = time.time()
+                hnsw_results = hnsw.search(passkey_embedding, k=1) # Returns list of (idx, score)
+                hnsw_time = (time.time() - hnsw_start) * 1000 # ms
+                
+                # Check recall (did we get the index of the passkey?)
+                # passkey_idx is the index of the passkey in the 'events' list
+                hnsw_found = False
+                if hnsw_results:
+                    found_idx = hnsw_results[0][0]
+                    if found_idx == passkey_idx:
+                         hnsw_found = True
+                    # Double check if events[found_idx] == passkey
+                    elif events[found_idx] == passkey: # Should match by index, but content safety check
+                         hnsw_found = True
 
                 depth_results['hnsw_times'].append(hnsw_time)
                 depth_results['hnsw_recall'].append(1.0 if hnsw_found else 0.0)
@@ -127,16 +162,20 @@ class NeedleInSpiralBenchmark:
                           f"HNSW={hnsw_time:.1f}ms (recall={hnsw_found})")
 
             # Aggregate results
+            # Handle division by zero for speedup if GMM is super fast (0.0ms)
+            mean_gmm = np.mean(depth_results['gmm_times'])
+            mean_hnsw = np.mean(depth_results['hnsw_times'])
+            speedup = mean_hnsw / mean_gmm if mean_gmm > 1e-9 else 0.0
+
             result_summary = {
                 'depth': depth,
-                'gmm_mean_time': np.mean(depth_results['gmm_times']),
+                'gmm_mean_time': mean_gmm,
                 'gmm_std_time': np.std(depth_results['gmm_times']),
                 'gmm_recall': np.mean(depth_results['gmm_recall']),
-                'hnsw_mean_time': np.mean(depth_results['hnsw_times']),
+                'hnsw_mean_time': mean_hnsw,
                 'hnsw_std_time': np.std(depth_results['hnsw_times']),
                 'hnsw_recall': np.mean(depth_results['hnsw_recall']),
-                'speedup': (np.mean(depth_results['hnsw_times']) /
-                           np.mean(depth_results['gmm_times']))
+                'speedup': speedup
             }
 
             self.results['gmm_results'].append(depth_results)

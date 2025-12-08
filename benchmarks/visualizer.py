@@ -101,22 +101,15 @@ class BenchmarkVisualizer:
 
         # Plot 4: Time Complexity Analysis
         ax4 = axes[1, 1]
-        # Theoretical curves
-        depth_range = np.logspace(2, 6, 50)
-        constant_time = np.ones_like(depth_range) * gmm_times[0]
-        log_time = gmm_times[0] + 2 * np.log2(depth_range / depths[0])
-
-        ax4.plot(depth_range, constant_time, '--', linewidth=2,
-                label='O(1) - GMM Theory', color='#ffd700', alpha=0.7)
-        ax4.plot(depth_range, log_time, '--', linewidth=2,
-                label='O(log N) - HNSW Theory', color='#ff6b6b', alpha=0.7)
-        ax4.plot(depths, gmm_times, 'o', markersize=10,
+        
+        ax4.plot(depths, gmm_times, 'o-', linewidth=2, markersize=8,
                 label='GMM Measured', color='#ffd700')
-        ax4.plot(depths, hnsw_times, 's', markersize=10,
-                label='HNSW Simulated', color='#ff6b6b')
+        ax4.plot(depths, hnsw_times, 's-', linewidth=2, markersize=8,
+                label='HNSW Measured', color='#ff6b6b')
+                
         ax4.set_xlabel('Memory Depth (# of engrams)', fontsize=12)
         ax4.set_ylabel('Retrieval Time (ms)', fontsize=12)
-        ax4.set_title('Complexity Analysis', fontsize=13, fontweight='bold')
+        ax4.set_title('Complexity Analysis (Log Scale)', fontsize=13, fontweight='bold')
         ax4.set_xscale('log')
         ax4.legend(fontsize=10)
         ax4.grid(True, alpha=0.3)

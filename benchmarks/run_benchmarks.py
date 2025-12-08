@@ -20,7 +20,11 @@ def main():
     print("=" * 80)
     print()
 
-    output_dir = Path("./benchmark_results")
+    import time
+    timestamp = time.strftime("%Y%m%d_%H%M%S")
+    output_dir = Path(f"./benchmark_results/{timestamp}")
+    output_dir.mkdir(parents=True, exist_ok=True)
+    print(f"Output Directory: {output_dir}")
 
     # ========================================================================
     # 1. NEEDLE IN THE SPIRAL BENCHMARK

@@ -86,3 +86,9 @@ results/
 *.swp
 .DS_Store
 Thumbs.db
+
+# Allow benchmark report
+!benchmark_results/**/benchmark_report.tex
+!benchmark_results/**/benchmark_report.pdf
+!cloud_benchmark_results/*.tex
+!cloud_benchmark_results/*.pdf

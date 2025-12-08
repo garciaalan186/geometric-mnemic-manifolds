@@ -1,0 +1,66 @@
+
+# 1. Headless Service for Stable DNS
+apiVersion: v1
+kind: Service
+metadata:
+  name: gmm-service
+spec:
+  clusterIP: None
+  selector:
+    app: gmm-shard
+  ports:
+  - port: 5000
+    name: http
+
+---
+# 2. StatefulSet for Shards (Workers)
+# We use StatefulSet to get stable hostnames (gmm-shard-0, gmm-shard-1...)
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: gmm-shards
+spec:
+  serviceName: "gmm-service"
+  replicas: 8
+  selector:
+    matchLabels:
+      app: gmm-shard
+  template:
+    metadata:
+      labels:
+        app: gmm-shard
+    spec:
+      containers:
+      - name: shard
+        image: gcr.io/geometric-mnemic-manifolds-bm/gmm-benchmark:latest
+        imagePullPolicy: Always
+        # Run Gunicorn with high timeout (building HNSW takes time)
+        command: ["gunicorn", "--bind", "0.0.0.0:5000", "--workers", "1", "--threads", "8", "--timeout", "600", "src.benchmark_server:app"]
+        resources:
+          requests:
+            # Request 3 vCPUs to force 1 pod per 4-vCPU node
+            cpu: "3000m"
+            memory: "4Gi"
+        ports:
+        - containerPort: 5000
+          name: http
+
+---
+# 3. Benchmark Job (Coordinator)
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: gmm-benchmark-v2
+spec:
+  backoffLimit: 0
+  template:
+    spec:
+      containers:
+      - name: benchmark
+        image: gcr.io/geometric-mnemic-manifolds-bm/gmm-benchmark:latest
+        imagePullPolicy: Always
+        command: ["python", "benchmarks/cloud_v2_benchmark.py"]
+        env:
+        - name: PYTHONUNBUFFERED
+          value: "1"
+      restartPolicy: Never

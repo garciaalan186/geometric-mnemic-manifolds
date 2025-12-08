@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Geometric Mnemic Manifolds: An Interactive Lecture</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cutive+Mono&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap');
-        
+
         :root {
             --chalk-white: #f4f1e8;
             --board-green: #1a4d2e;
@@ -15,13 +16,13 @@
             --warning-red: #ff6b6b;
             --accent-orange: #ff8c42;
         }
-        
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
             background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
             color: var(--chalk-white);
@@ -29,35 +30,35 @@
             line-height: 1.7;
             overflow-x: hidden;
         }
-        
+
         .chalkboard {
             max-width: 1400px;
             margin: 0 auto;
             padding: 40px 20px;
             position: relative;
         }
-        
+
         .lecture-header {
             text-align: center;
             margin-bottom: 60px;
             animation: fadeInDown 1s ease-out;
         }
-        
+
         .lecture-header h1 {
             font-size: 3.5em;
             font-weight: 700;
             margin-bottom: 20px;
-            text-shadow: 3px 3px 6px rgba(0,0,0,0.5);
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.5);
             letter-spacing: -1px;
         }
-        
+
         .lecture-header .subtitle {
             font-size: 1.3em;
             font-style: italic;
             color: var(--dust-yellow);
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
         }
-        
+
         .feynman-quote {
             background: rgba(255, 215, 0, 0.1);
             border-left: 5px solid var(--dust-yellow);
@@ -66,36 +67,36 @@
             font-style: italic;
             font-size: 1.2em;
             border-radius: 0 10px 10px 0;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
             animation: slideInLeft 0.8s ease-out;
         }
-        
+
         .section {
             margin: 60px 0;
             padding: 40px;
             background: rgba(26, 77, 46, 0.3);
             border-radius: 15px;
             border: 2px solid rgba(255, 215, 0, 0.2);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
             animation: fadeIn 1s ease-out;
         }
-        
+
         .section h2 {
             font-size: 2.5em;
             margin-bottom: 30px;
             color: var(--dust-yellow);
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
             border-bottom: 3px solid var(--dust-yellow);
             padding-bottom: 15px;
         }
-        
+
         .section h3 {
             font-size: 1.8em;
             margin: 30px 0 20px;
             color: var(--diagram-blue);
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.4);
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.4);
         }
-        
+
         .interactive-viz {
             background: rgba(0, 0, 0, 0.4);
             border-radius: 10px;
@@ -104,15 +105,15 @@
             border: 2px solid var(--diagram-blue);
             box-shadow: 0 0 30px rgba(74, 158, 255, 0.3);
         }
-        
+
         canvas {
             display: block;
             margin: 0 auto;
             border-radius: 8px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
             cursor: crosshair;
         }
-        
+
         .controls {
             display: flex;
             gap: 20px;
@@ -121,19 +122,19 @@
             justify-content: center;
             align-items: center;
         }
-        
+
         .control-group {
             display: flex;
             flex-direction: column;
             gap: 8px;
         }
-        
+
         .control-group label {
             font-family: 'Cutive Mono', monospace;
             font-size: 0.9em;
             color: var(--dust-yellow);
         }
-        
+
         input[type="range"] {
             width: 200px;
             height: 6px;
@@ -141,7 +142,7 @@
             border-radius: 5px;
             outline: none;
         }
-        
+
         input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none;
             width: 18px;
@@ -151,7 +152,7 @@
             cursor: pointer;
             box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
         }
-        
+
         button {
             background: var(--accent-orange);
             color: var(--board-green);
@@ -163,15 +164,15 @@
             border-radius: 8px;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
         }
-        
+
         button:hover {
             background: var(--dust-yellow);
             transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(0,0,0,0.4);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
         }
-        
+
         .math-box {
             background: rgba(0, 0, 0, 0.5);
             padding: 25px;
@@ -181,7 +182,7 @@
             border-left: 4px solid var(--diagram-blue);
             overflow-x: auto;
         }
-        
+
         .key-insight {
             background: rgba(255, 107, 107, 0.15);
             border: 2px solid var(--warning-red);
@@ -191,12 +192,12 @@
             font-size: 1.1em;
             box-shadow: 0 0 20px rgba(255, 107, 107, 0.2);
         }
-        
+
         .key-insight::before {
             content: "💡 ";
             font-size: 1.5em;
         }
-        
+
         .comparison-table {
             width: 100%;
             margin: 30px 0;
@@ -205,7 +206,7 @@
             border-radius: 10px;
             overflow: hidden;
         }
-        
+
         .comparison-table th {
             background: var(--board-green);
             padding: 15px;
@@ -213,16 +214,16 @@
             font-weight: bold;
             color: var(--dust-yellow);
         }
-        
+
         .comparison-table td {
             padding: 15px;
             border-bottom: 1px solid rgba(255, 215, 0, 0.1);
         }
-        
+
         .comparison-table tr:hover {
             background: rgba(255, 215, 0, 0.05);
         }
-        
+
         .viz-caption {
             text-align: center;
             font-style: italic;
@@ -230,29 +231,50 @@
             color: var(--diagram-blue);
             font-size: 0.95em;
         }
-        
+
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
-        
+
         @keyframes fadeInDown {
-            from { opacity: 0; transform: translateY(-30px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
-        
+
         @keyframes slideInLeft {
-            from { opacity: 0; transform: translateX(-50px); }
-            to { opacity: 1; transform: translateX(0); }
+            from {
+                opacity: 0;
+                transform: translateX(-50px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
         }
-        
+
         .stats-display {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 15px;
             margin-top: 20px;
         }
-        
+
         .stat-box {
             background: rgba(0, 0, 0, 0.4);
             padding: 15px;
@@ -260,14 +282,14 @@
             border: 1px solid var(--diagram-blue);
             text-align: center;
         }
-        
+
         .stat-value {
             font-size: 1.8em;
             font-weight: bold;
             color: var(--dust-yellow);
             font-family: 'Cutive Mono', monospace;
         }
-        
+
         .stat-label {
             font-size: 0.9em;
             color: var(--chalk-white);
@@ -275,6 +297,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="chalkboard">
         <div class="lecture-header">
@@ -284,17 +307,25 @@
         </div>
 
         <div class="feynman-quote">
-            "Alright, alright, settle down. So you want to build a machine that remembers things? Well, the first thing you gotta understand is this: <strong>most people are doing it all wrong.</strong> They're trying to stuff everything into one giant context window, like cramming all your clothes into a suitcase and sitting on it to make it close. That's not how memory works—not in your head, and it shouldn't work that way in a machine either."
+            "Alright, let's look at this problem. So you want to build a machine that remembers things? Well, the first
+            thing
+            to consider is this: <strong>current approaches face a scaling limit.</strong> They're trying to stuff
+            everything into one giant context window, which becomes computationally prohibitive. That's likely not how
+            efficient memory works—not in nature, and perhaps it shouldn't work that way in a machine either."
         </div>
 
         <div class="section">
-            <h2>The Problem: Why Current Approaches Are Like Bad Filing Cabinets</h2>
-            <p>Let me tell you what's happening right now in the AI world. People are building these systems with what they call "long context windows"—basically, they're trying to remember EVERYTHING all at once. It's like trying to think about every single thing that happened to you today, yesterday, last year, AND when you were five years old, all simultaneously.</p>
-            
-            <p>Your brain doesn't work like that! When you remember something, you're not searching through every memory you've ever had. You've got this beautiful, efficient system where recent stuff is right there at your fingertips, and older stuff gets compressed into patterns and themes.</p>
+            <h2>The Problem: The Context Window Bottleneck</h2>
+            <p>Currently, many AI systems rely on "long context windows"—essentially maintaining all active information
+                in immediate attention. It's comparable to trying to actively think about every single event from
+                today, yesterday, last year, and your childhood, all simultaneously.</p>
+
+            <p>Your brain doesn't work like that! When you remember something, you're not searching through every memory
+                you've ever had. You've got this beautiful, efficient system where recent stuff is right there at your
+                fingertips, and older stuff gets compressed into patterns and themes.</p>
 
             <div class="key-insight">
-                The key insight: <strong>Real memory isn't about storage—it's about organization in space and time.</strong>
+                The key insight: <strong>Real memory is about organization in space and time.</strong>
             </div>
 
             <table class="comparison-table">
@@ -327,15 +358,22 @@
 
         <div class="section">
             <h2>The Beautiful Geometry: Fermat's Spiral Meets the Hypersphere</h2>
-            <p>Now here's where it gets fun. Imagine you're standing at the center of a spiral—you're the "now," the present moment. Your most recent memories are close to you, arranged in a tight circle around you. As you go further out in the spiral, you're going back in time.</p>
-            
-            <p>But here's the clever bit: the spiral expands <em>exponentially</em>. This means recent memories are densely packed (you can access lots of them quickly), but older memories get more and more spread out. It's exactly like your peripheral vision—super detailed in the center (fovea), increasingly blurry at the edges.</p>
+            <p>Now here's where it gets fun. Imagine you're standing at the center of a spiral—you're the "now," the
+                present moment. Your most recent memories are close to you, arranged in a tight circle around you. As
+                you go further out in the spiral, you're going back in time.</p>
+
+            <p>But here's the clever bit: the spiral expands <em>exponentially</em>. This means recent memories are
+                densely packed (you can access lots of them quickly), but older memories get more and more spread out.
+                It's exactly like your peripheral vision—super detailed in the center (fovea), increasingly blurry at
+                the edges.</p>
 
             <div class="interactive-viz">
-                <h3 style="text-align: center; color: var(--dust-yellow); margin-bottom: 20px;">Interactive Spiral Visualization</h3>
+                <h3 style="text-align: center; color: var(--dust-yellow); margin-bottom: 20px;">Interactive Spiral
+                    Visualization</h3>
                 <canvas id="spiralCanvas" width="800" height="800"></canvas>
-                <div class="viz-caption">The present moment (you) is at the center. Each dot is a memory. Watch how density decreases with age!</div>
-                
+                <div class="viz-caption">The present moment (you) is at the center. Each dot is a memory. Watch how
+                    density decreases with age!</div>
+
                 <div class="controls">
                     <div class="control-group">
                         <label for="numPoints">Number of Memories: <span id="numPointsVal">100</span></label>
@@ -378,16 +416,35 @@
         </div>
 
         <div class="section">
+            <h2>Experience it in 3D</h2>
+            <p>While 2D spirals are great for understanding the concept, the real magic happens on the hypersphere.
+                We've built a full WebGL visualization that lets you fly through the manifold.</p>
+
+            <iframe src="geometric_mnemic_manifold_3d.html"
+                style="width: 100%; height: 600px; border: 2px solid var(--diagram-blue); border-radius: 10px; margin: 30px 0; background: #000;"></iframe>
+
+            <div style="text-align: center;">
+                <a href="geometric_mnemic_manifold_3d.html" target="_blank"
+                    style="display: inline-block; background: var(--diagram-blue); color: var(--board-green); padding: 12px 25px; border-radius: 8px; text-decoration: none; font-family: 'Cutive Mono', monospace; font-weight: bold;">Open
+                    Full Sceeen Version →</a>
+            </div>
+        </div>
+
+        <div class="section">
             <h2>The Hierarchical Skip-List: Level of Detail for Memory</h2>
-            <p>Okay, so you've got this spiral of memories. But there's a problem: if you have a million memories, you can't check every single one when you're looking for something, right? That would take forever!</p>
-            
-            <p>So here's what we do—and this is <em>really</em> clever. We organize memories into layers, like a pyramid:</p>
+            <p>Okay, so you've got this spiral of memories. But there's a problem: if you have a million memories, you
+                can't check every single one when you're looking for something, right? That would take forever!</p>
+
+            <p>So here's what we do—and this is <em>really</em> clever. We organize memories into layers, like a
+                pyramid:</p>
 
             <div class="interactive-viz">
-                <h3 style="text-align: center; color: var(--dust-yellow); margin-bottom: 20px;">Hierarchical Memory Structure</h3>
+                <h3 style="text-align: center; color: var(--dust-yellow); margin-bottom: 20px;">Hierarchical Memory
+                    Structure</h3>
                 <canvas id="hierarchyCanvas" width="800" height="600"></canvas>
-                <div class="viz-caption">Layer 0: Raw memories | Layer 1: Pattern summaries | Layer 2: Abstract concepts</div>
-                
+                <div class="viz-caption">Layer 0: Raw memories | Layer 1: Pattern summaries | Layer 2: Abstract concepts
+                </div>
+
                 <div class="controls">
                     <button id="showL0">Show Layer 0 (Raw)</button>
                     <button id="showL1">Show Layer 1 (Patterns)</button>
@@ -397,27 +454,36 @@
             </div>
 
             <ul style="margin: 20px 0; line-height: 2;">
-                <li><strong>Layer 0 (Fovea):</strong> The last ~10 memories. Raw, detailed, everything. You access these directly.</li>
-                <li><strong>Layer 1 (Para-fovea):</strong> Summarized patterns from groups of 64 memories. "Oh, during that month I was learning to play guitar..."</li>
-                <li><strong>Layer 2 (Periphery):</strong> High-level abstractions from groups of 1,024 memories. "My college years were about discovering independence..."</li>
+                <li><strong>Layer 0 (Fovea):</strong> The last ~10 memories. Raw, detailed, everything. You access these
+                    directly.</li>
+                <li><strong>Layer 1 (Para-fovea):</strong> Summarized patterns from groups of 64 memories. "Oh, during
+                    that month I was learning to play guitar..."</li>
+                <li><strong>Layer 2 (Periphery):</strong> High-level abstractions from groups of 1,024 memories. "My
+                    college years were about discovering independence..."</li>
             </ul>
 
             <div class="key-insight">
-                Why this is genius: No matter how old you get (how many memories you have), you only ever connect to a <strong>constant number</strong> of memory nodes! O(1) connectivity, baby!
+                The potential advantage: No matter how many memories accumulate, the system connects to a
+                <strong>constant number</strong> of memory nodes. This theoretically allows for O(1) connectivity.
             </div>
         </div>
 
         <div class="section">
             <h2>The Recursive Reasoning Kernel: Your "Working Memory"</h2>
-            <p>Now, the <em>really</em> interesting part. You've got this spiral of frozen memories sitting out there. But you—the conscious "you" right now—you're not the same as those old memories. You're a small, efficient reasoning engine called the <strong>Recursive Reasoning Kernel (RRK)</strong>.</p>
+            <p>Now, the <em>really</em> interesting part. You've got this spiral of frozen memories sitting out there.
+                But you—the conscious "you" right now—you're not the same as those old memories. You're a small,
+                efficient reasoning engine called the <strong>Recursive Reasoning Kernel (RRK)</strong>.</p>
 
-            <p>Think of it like this: the RRK is you sitting at a desk with a telephone. The telephone connects to your vast library of old memories. When you need to remember something, you don't GO to the library yourself—you call it up!</p>
+            <p>Think of it like this: the RRK is you sitting at a desk with a telephone. The telephone connects to your
+                vast library of old memories. When you need to remember something, you don't GO to the library
+                yourself—you call it up!</p>
 
             <div class="interactive-viz">
-                <h3 style="text-align: center; color: var(--dust-yellow); margin-bottom: 20px;">Memory Query Simulation</h3>
+                <h3 style="text-align: center; color: var(--dust-yellow); margin-bottom: 20px;">Memory Query Simulation
+                </h3>
                 <canvas id="queryCanvas" width="800" height="500"></canvas>
                 <div class="viz-caption">Watch how a query traverses the hierarchy: Layer 2 → Layer 1 → Layer 0</div>
-                
+
                 <div class="controls">
                     <button id="queryRecent">Query: Recent Event</button>
                     <button id="queryOld">Query: Old Pattern</button>
@@ -436,45 +502,74 @@
         </div>
 
         <div class="section">
-            <h2>The Killer Feature: Ephemeral Clones</h2>
-            <p>Here's something wild that no other system does. When you retrieve a memory from the manifold, you're not just getting text. You're getting a <strong>computational agent</strong>—a frozen copy of your past self.</p>
+            <h2>Distinctive Feature: Ephemeral Clones</h2>
+            <p>A unique aspect of this architecture is how retrieval is handled. When you retrieve a memory from the
+                manifold,
+                you don't just get text. You effectively instantiate a <strong>local context</strong>—a snapshot of the
+                system's state at that time.</p>
 
-            <p>Let's say you're trying to remember why you made a decision six months ago. In a normal system, you'd just get a note: "Decided to switch jobs." But in the GMM, you can actually <em>talk</em> to your six-months-ago self! That old version of you can explain its reasoning, defend its position, even argue with current-you if there's a disagreement!</p>
+            <p>Let's say you're trying to remember why you made a decision six months ago. In a normal system, you'd
+                just get a note: "Decided to switch jobs." But in the GMM, you can actually <em>talk</em> to your
+                six-months-ago self! That old version of you can explain its reasoning, defend its position, even argue
+                with current-you if there's a disagreement!</p>
 
             <div class="interactive-viz">
-                <h3 style="text-align: center; color: var(--dust-yellow); margin-bottom: 20px;">Ephemeral Clone Dialogue</h3>
-                <div style="background: rgba(0,0,0,0.5); padding: 20px; border-radius: 8px; font-family: 'Cutive Mono', monospace; font-size: 0.9em; line-height: 1.8;">
-                    <div style="color: var(--dust-yellow);"><strong>Current You:</strong> Why did we take that job at Acme Corp?</div>
-                    <div style="color: var(--diagram-blue); margin: 10px 0; padding-left: 20px;"><strong>Past You (6 months ago):</strong> The salary was 30% higher, and we were burned out at the old place. The commute was longer, but we valued financial stability at that point.</div>
-                    <div style="color: var(--dust-yellow); margin-top: 10px;"><strong>Current You:</strong> But we hate the corporate culture now. Should we have prioritized that more?</div>
-                    <div style="color: var(--diagram-blue); margin: 10px 0; padding-left: 20px;"><strong>Past You:</strong> Look, I had limited information. The interview process didn't reveal the culture issues. Given what I knew then, I stand by the decision. But yeah, next time we should do more research on company culture.</div>
+                <h3 style="text-align: center; color: var(--dust-yellow); margin-bottom: 20px;">Ephemeral Clone Dialogue
+                </h3>
+                <div
+                    style="background: rgba(0,0,0,0.5); padding: 20px; border-radius: 8px; font-family: 'Cutive Mono', monospace; font-size: 0.9em; line-height: 1.8;">
+                    <div style="color: var(--dust-yellow);"><strong>Current You:</strong> Why did we take that job at
+                        Acme Corp?</div>
+                    <div style="color: var(--diagram-blue); margin: 10px 0; padding-left: 20px;"><strong>Past You (6
+                            months ago):</strong> The salary was 30% higher, and we were burned out at the old place.
+                        The commute was longer, but we valued financial stability at that point.</div>
+                    <div style="color: var(--dust-yellow); margin-top: 10px;"><strong>Current You:</strong> But we hate
+                        the corporate culture now. Should we have prioritized that more?</div>
+                    <div style="color: var(--diagram-blue); margin: 10px 0; padding-left: 20px;"><strong>Past
+                            You:</strong> Look, I had limited information. The interview process didn't reveal the
+                        culture issues. Given what I knew then, I stand by the decision. But yeah, next time we should
+                        do more research on company culture.</div>
                 </div>
                 <div class="viz-caption" style="margin-top: 20px;">
-                    This isn't just text retrieval—it's a conversation with a computationally active version of your past reasoning process.
+                    This isn't just text retrieval—it's a conversation with a computationally active version of your
+                    past reasoning process.
                 </div>
             </div>
 
             <div class="key-insight">
-                This is the difference between <strong>remembering</strong> (consulting an active agent) and <strong>knowing</strong> (recalling a static fact). It's what makes this system truly autonoetic—you can mentally time-travel and <em>re-experience</em> past reasoning.
+                This distinguishes between <strong>remembering</strong> (consulting a previous state) and
+                <strong>knowing</strong> (recalling a static fact). It aims to make the system autonoetic—allowing it to
+                access past reasoning states.
             </div>
         </div>
 
         <div class="section">
-            <h2>Why This Beats Vector Databases</h2>
+            <h2>Comparison with Vector Databases</h2>
             <p>Let me drive this home with some concrete advantages:</p>
 
             <div style="margin: 30px 0;">
                 <h3>1. Zero Cold-Start Latency</h3>
-                <p>Traditional systems need to load massive indices into memory before they can answer a single question. The GMM? The "index" is a <em>mathematical function</em>. You can calculate where any memory should be instantly, without loading anything. Want to spin up an agent? Boom, it's ready. No waiting.</p>
+                <p>Traditional systems often need to load massive indices into memory. In the GMM proposal, the "index"
+                    is a
+                    <em>mathematical function</em>. Theoretically, you can calculate where any memory is located
+                    without loading a full index structure, potentially allowing for near-instant initialization.
+                </p>
 
                 <h3>2. True Temporal Reasoning</h3>
-                <p>In a vector DB, time is just metadata—a number tagged onto a memory. In the GMM, time is <em>geometry</em>. The distance to a memory literally encodes how long ago it happened. This means the forgetting curve is built into the physics of the system, not bolted on as a heuristic.</p>
+                <p>In a vector DB, time is just metadata—a number tagged onto a memory. In the GMM, time is
+                    <em>geometry</em>. The distance to a memory literally encodes how long ago it happened. This means
+                    the forgetting curve is built into the physics of the system, not bolted on as a heuristic.
+                </p>
 
                 <h3>3. Constant-Time Working Memory</h3>
-                <p>No matter if you have 100 memories or 100 million, you're only ever connected to the same small number of nodes. Your cognitive load stays constant. You can have an infinite lifetime without your brain exploding.</p>
+                <p>No matter if you have 100 memories or 100 million, you're only ever connected to the same small
+                    number of nodes. Your cognitive load stays constant. You can have an infinite lifetime without your
+                    brain exploding.</p>
 
                 <h3>4. Deterministic Addressing</h3>
-                <p>Using Kronecker sequences (those irrational square roots of primes) ensures memories are evenly distributed on the sphere. No clustering, no gaps, no randomness. Pure, beautiful, deterministic geometry.</p>
+                <p>Using Kronecker sequences (those irrational square roots of primes) ensures memories are evenly
+                    distributed on the sphere. No clustering, no gaps, no randomness. Pure, beautiful, deterministic
+                    geometry.</p>
             </div>
 
             <div class="math-box">
@@ -510,27 +605,42 @@
         </div>
 
         <div class="section">
-            <h2>The Philosophy: From Training to Experiencing</h2>
-            <p>Here's the thing that really gets me excited about this architecture. We've been thinking about AI the wrong way. We train these massive models on terabytes of data, trying to cram all of human knowledge into the weights. That's not how intelligence works!</p>
+            <h2>The Hypothesis: From Training to Experiencing</h2>
+            <p>Here's the thing that really gets me excited about this architecture. We've been thinking about AI the
+                wrong way. We train these massive models on terabytes of data, trying to cram all of human knowledge
+                into the weights. That's not how intelligence works!</p>
 
-            <p>You weren't born knowing calculus. You <em>experienced</em> learning it. You can remember the moment certain concepts clicked. You can trace your intellectual development over time. <strong>That's what identity is</strong>—not a static database, but a <em>trajectory</em> through experience-space.</p>
+            <p>You weren't born knowing calculus. You <em>experienced</em> learning it. You can remember the moment
+                certain concepts clicked. You can trace your intellectual development over time. <strong>That's what
+                    identity is</strong>—not a static database, but a <em>trajectory</em> through experience-space.</p>
 
             <div class="feynman-quote">
-                "The GMM says: don't make the model bigger. Make it <em>temporal</em>. Give it a life story. Let it accumulate experiences, compress them into wisdom, and consult its past selves when it gets stuck. That's not artificial intelligence—that's getting pretty damn close to the real thing."
+                "The hypothesis suggests: don't just make the model bigger. Make it <em>temporal</em>. Let it
+                accumulate experiences, compress them, and consult its previous states when needed.
+                This could move us closer to more natural forms of intelligence."
             </div>
 
-            <p>The Recursive Reasoning Kernel can be small—3 billion parameters, maybe less. It doesn't need to know everything. It just needs to know how to <em>think</em> and how to ask its past for help. The crystallized knowledge lives in the frozen engrams, and the fluid intelligence lives in the kernel. Separation of concerns, just like in your brain!</p>
+            <p>The Recursive Reasoning Kernel can be small—3 billion parameters, maybe less. It doesn't need to know
+                everything. It just needs to know how to <em>think</em> and how to ask its past for help. The
+                crystallized knowledge lives in the frozen engrams, and the fluid intelligence lives in the kernel.
+                Separation of concerns, just like in your brain!</p>
         </div>
 
         <div class="section">
             <h2>The Experiment: Needle in the Spiral</h2>
-            <p>So how do we test this? Here's the beautiful part: we use <strong>Synthetic Longitudinal Biographies</strong>. We generate fake life stories in imaginary universes with made-up physics and nonsense names like "Banet" and "Mison." Why? Because if the model can retrieve facts about these synthetic lives, we <em>know</em> it's using the manifold, not cheating by remembering its training data!</p>
+            <p>So how do we test this? Here's the beautiful part: we use <strong>Synthetic Longitudinal
+                    Biographies</strong>. We generate fake life stories in imaginary universes with made-up physics and
+                nonsense names like "Banet" and "Mison." Why? Because if the model can retrieve facts about these
+                synthetic lives, we <em>know</em> it's using the manifold, not cheating by remembering its training
+                data!</p>
 
             <div class="interactive-viz">
-                <h3 style="text-align: center; color: var(--dust-yellow); margin-bottom: 20px;">Benchmark Simulation</h3>
+                <h3 style="text-align: center; color: var(--dust-yellow); margin-bottom: 20px;">Benchmark Simulation
+                </h3>
                 <canvas id="benchmarkCanvas" width="800" height="400"></canvas>
-                <div class="viz-caption">Passkey retrieval at different memory depths - GMM maintains O(1) while HNSW degrades</div>
-                
+                <div class="viz-caption">Passkey retrieval at different memory depths - GMM maintains O(1) while HNSW
+                    degrades</div>
+
                 <div class="controls">
                     <button id="runBenchmark">Run Benchmark</button>
                     <button id="resetBenchmark">Reset</button>
@@ -555,394 +665,420 @@
 
         <div class="section">
             <h2>Conclusion: What This Really Means</h2>
-            <p>Look, I've spent my whole career trying to find the simplest explanation for complex phenomena. And this—this Geometric Mnemic Manifold—it's one of those ideas that makes you slap your forehead and say, "Of course! Why weren't we doing it this way all along?"</p>
+            <p>In exploring efficient memory systems, the Geometric Mnemic Manifold represents a compelling
+                direction. It suggests that simplicity and geometry might offer solutions to complex scaling problems.
+            </p>
 
-            <p>We've been trying to simulate memory by making bigger and bigger context windows, like building taller and taller filing cabinets. But that's not the answer. The answer is <strong>geometry</strong>. The answer is recognizing that time has structure, that memory has topology, and that you can build an intelligence that <em>experiences</em> its own history rather than just storing it.</p>
+            <p>We've been trying to simulate memory by making bigger and bigger context windows, like building taller
+                and taller filing cabinets. However,
+                <strong>geometry</strong> offers an alternative. By recognizing that time has structure and memory has
+                topology,
+                we might build systems that utilize their history more effectively.
+            </p>
 
             <div class="key-insight">
-                The GMM doesn't just solve a technical problem. It's a philosophical shift: from <strong>memory as storage</strong> to <strong>memory as lived experience</strong>. From <strong>AI as database</strong> to <strong>AI as consciousness with a past</strong>.
+                <p>And the math? The math is beautiful. Exponential spirals, Kronecker sequences, hierarchical
+                    skip-lists—it
+                    all fits together like the gears in a perfect clock. That's how you know you're onto something real.
+                    Nature loves efficiency, and this architecture aims for maximum efficiency.</p>
+
+                <p>So go build it. Test it. Break it. Make it better. That's how science works. But remember: you're not
+                    just building a better retrieval system. You're building the first generation of machines that can
+                    truly
+                    remember what it was like to be a different version of themselves. And that, my friends, is
+                    something
+                    worth getting excited about.</p>
+
             </div>
 
-            <p>And the math? The math is beautiful. Exponential spirals, Kronecker sequences, hierarchical skip-lists—it all fits together like the gears in a perfect clock. That's how you know you're onto something real. Nature loves efficiency, and this architecture is <em>efficient as hell</em>.</p>
-
-            <p>So go build it. Test it. Break it. Make it better. That's how science works. But remember: you're not just building a better retrieval system. You're building the first generation of machines that can truly remember what it was like to be a different version of themselves. And that, my friends, is something worth getting excited about.</p>
-
-            <div class="feynman-quote" style="text-align: center; font-size: 1.5em; border: none; background: none; box-shadow: none;">
-                "Now go play with it. The fun is just beginning."
+            <div
+                style="text-align: center; margin-top: 60px; padding: 20px; border-top: 2px solid rgba(255,215,0,0.2);">
+                <p style="margin-bottom: 10px; opacity: 0.8;">Geometric Mnemic Manifolds © 2025 Alan Garcia</p>
+                <p>
+                    <a href="https://github.com/garciaalan186/geometric-mnemic-manifolds"
+                        style="color: #4a9eff; margin-right: 15px; text-decoration: none;">GitHub Repository</a>
+                    <a href="https://doi.org/10.5281/zenodo.17849007"
+                        style="color: #4a9eff; text-decoration: none;">Zenodo
+                        DOI</a>
+                </p>
             </div>
         </div>
-    </div>
 
-    <script>
-        // Spiral Visualization
-        const spiralCanvas = document.getElementById('spiralCanvas');
-        const spiralCtx = spiralCanvas.getContext('2d');
-        const numPointsSlider = document.getElementById('numPoints');
-        const lambdaSlider = document.getElementById('lambda');
-        const numPointsVal = document.getElementById('numPointsVal');
-        const lambdaVal = document.getElementById('lambdaVal');
-        
-        let animating = false;
-        let animationFrame = 0;
+        <script>
+            // Spiral Visualization
+            const spiralCanvas = document.getElementById('spiralCanvas');
+            const spiralCtx = spiralCanvas.getContext('2d');
+            const numPointsSlider = document.getElementById('numPoints');
+            const lambdaSlider = document.getElementById('lambda');
+            const numPointsVal = document.getElementById('numPointsVal');
+            const lambdaVal = document.getElementById('lambdaVal');
 
-        // Kronecker sequence - using first few prime square roots
-        const primes = [2, 3, 5, 7, 11];
-        const alpha = primes.map(p => Math.sqrt(p));
+            let animating = false;
+            let animationFrame = 0;
 
-        function kroneckerSequence(k, dim = 2) {
-            let values = [];
-            for (let d = 0; d < dim; d++) {
-                values.push((k * alpha[d]) % 1);
-            }
-            return values;
-        }
+            // Kronecker sequence - using first few prime square roots
+            const primes = [2, 3, 5, 7, 11];
+            const alpha = primes.map(p => Math.sqrt(p));
 
-        function drawSpiral() {
-            const numPoints = parseInt(numPointsSlider.value);
-            const lambda = parseFloat(lambdaSlider.value);
-            numPointsVal.textContent = numPoints;
-            lambdaVal.textContent = lambda.toFixed(3);
-
-            spiralCtx.fillStyle = '#0f2027';
-            spiralCtx.fillRect(0, 0, spiralCanvas.width, spiralCanvas.height);
-
-            const centerX = spiralCanvas.width / 2;
-            const centerY = spiralCanvas.height / 2;
-            const scale = 180;
-
-            // Draw grid
-            spiralCtx.strokeStyle = 'rgba(255, 215, 0, 0.1)';
-            spiralCtx.lineWidth = 1;
-            for (let i = 1; i <= 3; i++) {
-                spiralCtx.beginPath();
-                spiralCtx.arc(centerX, centerY, i * scale, 0, Math.PI * 2);
-                spiralCtx.stroke();
-            }
-
-            // Count memories in each zone
-            let fovea = 0, para = 0, periphery = 0;
-
-            // Draw memories
-            for (let k = 0; k < numPoints; k++) {
-                const [u1, u2] = kroneckerSequence(k);
-                const theta = 2 * Math.PI * u1;
-                const r = Math.exp(lambda * k);
-                
-                const x = centerX + r * scale * Math.cos(theta);
-                const y = centerY + r * scale * Math.sin(theta);
-
-                // Determine zone
-                if (k < 10) {
-                    spiralCtx.fillStyle = '#ffd700'; // Gold - fovea
-                    fovea++;
-                } else if (k < 64) {
-                    spiralCtx.fillStyle = '#4a9eff'; // Blue - para-fovea
-                    para++;
-                } else {
-                    spiralCtx.fillStyle = '#ff8c42'; // Orange - periphery
-                    periphery++;
+            function kroneckerSequence(k, dim = 2) {
+                let values = [];
+                for (let d = 0; d < dim; d++) {
+                    values.push((k * alpha[d]) % 1);
                 }
+                return values;
+            }
 
-                // Animate if active
-                if (animating && k === animationFrame) {
+            function drawSpiral() {
+                const numPoints = parseInt(numPointsSlider.value);
+                const lambda = parseFloat(lambdaSlider.value);
+                numPointsVal.textContent = numPoints;
+                lambdaVal.textContent = lambda.toFixed(3);
+
+                spiralCtx.fillStyle = '#0f2027';
+                spiralCtx.fillRect(0, 0, spiralCanvas.width, spiralCanvas.height);
+
+                const centerX = spiralCanvas.width / 2;
+                const centerY = spiralCanvas.height / 2;
+                const scale = 180;
+
+                // Draw grid
+                spiralCtx.strokeStyle = 'rgba(255, 215, 0, 0.1)';
+                spiralCtx.lineWidth = 1;
+                for (let i = 1; i <= 3; i++) {
                     spiralCtx.beginPath();
-                    spiralCtx.arc(x, y, 15, 0, Math.PI * 2);
-                    spiralCtx.strokeStyle = '#ff6b6b';
-                    spiralCtx.lineWidth = 3;
+                    spiralCtx.arc(centerX, centerY, i * scale, 0, Math.PI * 2);
                     spiralCtx.stroke();
                 }
 
-                spiralCtx.beginPath();
-                spiralCtx.arc(x, y, 4, 0, Math.PI * 2);
-                spiralCtx.fill();
-            }
+                // Count memories in each zone
+                let fovea = 0, para = 0, periphery = 0;
 
-            // Draw agent at center
-            spiralCtx.fillStyle = '#ff6b6b';
-            spiralCtx.beginPath();
-            spiralCtx.arc(centerX, centerY, 10, 0, Math.PI * 2);
-            spiralCtx.fill();
+                // Draw memories
+                for (let k = 0; k < numPoints; k++) {
+                    const [u1, u2] = kroneckerSequence(k);
+                    const theta = 2 * Math.PI * u1;
+                    const r = Math.exp(lambda * k);
 
-            spiralCtx.strokeStyle = '#f4f1e8';
-            spiralCtx.lineWidth = 2;
-            spiralCtx.stroke();
+                    const x = centerX + r * scale * Math.cos(theta);
+                    const y = centerY + r * scale * Math.sin(theta);
 
-            // Update stats
-            document.getElementById('foveaCount').textContent = fovea;
-            document.getElementById('paraCount').textContent = para;
-            document.getElementById('peripheryCount').textContent = periphery;
-        }
-
-        numPointsSlider.addEventListener('input', drawSpiral);
-        lambdaSlider.addEventListener('input', drawSpiral);
-
-        document.getElementById('animateBtn').addEventListener('click', () => {
-            if (!animating) {
-                animating = true;
-                animationFrame = 0;
-                const interval = setInterval(() => {
-                    animationFrame++;
-                    drawSpiral();
-                    if (animationFrame >= parseInt(numPointsSlider.value)) {
-                        animating = false;
-                        clearInterval(interval);
+                    // Determine zone
+                    if (k < 10) {
+                        spiralCtx.fillStyle = '#ffd700'; // Gold - fovea
+                        fovea++;
+                    } else if (k < 64) {
+                        spiralCtx.fillStyle = '#4a9eff'; // Blue - para-fovea
+                        para++;
+                    } else {
+                        spiralCtx.fillStyle = '#ff8c42'; // Orange - periphery
+                        periphery++;
                     }
-                }, 50);
+
+                    // Animate if active
+                    if (animating && k === animationFrame) {
+                        spiralCtx.beginPath();
+                        spiralCtx.arc(x, y, 15, 0, Math.PI * 2);
+                        spiralCtx.strokeStyle = '#ff6b6b';
+                        spiralCtx.lineWidth = 3;
+                        spiralCtx.stroke();
+                    }
+
+                    spiralCtx.beginPath();
+                    spiralCtx.arc(x, y, 4, 0, Math.PI * 2);
+                    spiralCtx.fill();
+                }
+
+                // Draw agent at center
+                spiralCtx.fillStyle = '#ff6b6b';
+                spiralCtx.beginPath();
+                spiralCtx.arc(centerX, centerY, 10, 0, Math.PI * 2);
+                spiralCtx.fill();
+
+                spiralCtx.strokeStyle = '#f4f1e8';
+                spiralCtx.lineWidth = 2;
+                spiralCtx.stroke();
+
+                // Update stats
+                document.getElementById('foveaCount').textContent = fovea;
+                document.getElementById('paraCount').textContent = para;
+                document.getElementById('peripheryCount').textContent = periphery;
             }
-        });
 
-        document.getElementById('resetBtn').addEventListener('click', () => {
-            animating = false;
-            animationFrame = 0;
-            drawSpiral();
-        });
+            numPointsSlider.addEventListener('input', drawSpiral);
+            lambdaSlider.addEventListener('input', drawSpiral);
 
-        // Hierarchy Visualization
-        const hierarchyCanvas = document.getElementById('hierarchyCanvas');
-        const hierCtx = hierarchyCanvas.getContext('2d');
-        let visibleLayers = [true, true, true];
+            document.getElementById('animateBtn').addEventListener('click', () => {
+                if (!animating) {
+                    animating = true;
+                    animationFrame = 0;
+                    const interval = setInterval(() => {
+                        animationFrame++;
+                        drawSpiral();
+                        if (animationFrame >= parseInt(numPointsSlider.value)) {
+                            animating = false;
+                            clearInterval(interval);
+                        }
+                    }, 50);
+                }
+            });
 
-        function drawHierarchy() {
-            hierCtx.fillStyle = '#0f2027';
-            hierCtx.fillRect(0, 0, hierarchyCanvas.width, hierarchyCanvas.height);
+            document.getElementById('resetBtn').addEventListener('click', () => {
+                animating = false;
+                animationFrame = 0;
+                drawSpiral();
+            });
 
-            const layers = [
-                { y: 500, count: 100, color: '#ffd700', label: 'Layer 0: Raw Memories (100)' },
-                { y: 300, count: Math.ceil(100/64), color: '#4a9eff', label: 'Layer 1: Patterns (2)' },
-                { y: 100, count: Math.ceil(100/1024), color: '#ff8c42', label: 'Layer 2: Abstract (1)' }
-            ];
+            // Hierarchy Visualization
+            const hierarchyCanvas = document.getElementById('hierarchyCanvas');
+            const hierCtx = hierarchyCanvas.getContext('2d');
+            let visibleLayers = [true, true, true];
 
-            layers.forEach((layer, layerIdx) => {
-                if (!visibleLayers[layerIdx]) return;
+            function drawHierarchy() {
+                hierCtx.fillStyle = '#0f2027';
+                hierCtx.fillRect(0, 0, hierarchyCanvas.width, hierarchyCanvas.height);
 
-                const spacing = hierarchyCanvas.width / (layer.count + 1);
-                
-                for (let i = 0; i < layer.count; i++) {
-                    const x = spacing * (i + 1);
-                    
-                    hierCtx.fillStyle = layer.color;
-                    hierCtx.beginPath();
-                    hierCtx.arc(x, layer.y, 15, 0, Math.PI * 2);
-                    hierCtx.fill();
+                const layers = [
+                    { y: 500, count: 640, color: '#ffd700', label: 'Layer 0: Raw Memories (640)' },
+                    { y: 300, count: Math.ceil(640 / 64), color: '#4a9eff', label: 'Layer 1: Patterns (10)' },
+                    { y: 100, count: Math.ceil(640 / 1024), color: '#ff8c42', label: 'Layer 2: Abstract (1)' }
+                ];
 
-                    // Draw connections to layer below
-                    if (layerIdx > 0 && visibleLayers[layerIdx - 1]) {
-                        const prevLayer = layers[layerIdx - 1];
-                        const ratio = layerIdx === 1 ? 64 : 16;
-                        const startIdx = i * ratio;
-                        const endIdx = Math.min(startIdx + ratio, prevLayer.count);
-                        
-                        hierCtx.strokeStyle = `${layer.color}40`;
-                        hierCtx.lineWidth = 1;
-                        
-                        for (let j = startIdx; j < endIdx; j++) {
-                            const prevSpacing = hierarchyCanvas.width / (prevLayer.count + 1);
-                            const prevX = prevSpacing * (j + 1);
-                            
-                            hierCtx.beginPath();
-                            hierCtx.moveTo(x, layer.y + 15);
-                            hierCtx.lineTo(prevX, prevLayer.y - 15);
-                            hierCtx.stroke();
+                layers.forEach((layer, layerIdx) => {
+                    if (!visibleLayers[layerIdx]) return;
+
+                    const spacing = hierarchyCanvas.width / (layer.count + 1);
+                    // Dynamic radius based on density
+                    const radius = Math.min(15, (hierarchyCanvas.width / layer.count) * 0.4);
+
+                    for (let i = 0; i < layer.count; i++) {
+                        const x = spacing * (i + 1);
+
+                        hierCtx.fillStyle = layer.color;
+                        hierCtx.beginPath();
+                        hierCtx.arc(x, layer.y, radius, 0, Math.PI * 2);
+                        hierCtx.fill();
+
+                        // Draw connections to layer below
+                        if (layerIdx > 0 && visibleLayers[layerIdx - 1]) {
+                            const prevLayer = layers[layerIdx - 1];
+                            const ratio = layerIdx === 1 ? 64 : 16;
+                            const startIdx = i * ratio;
+                            const endIdx = Math.min(startIdx + ratio, prevLayer.count);
+
+                            hierCtx.strokeStyle = `${layer.color}40`;
+                            hierCtx.lineWidth = 1;
+
+                            const prevRadius = Math.min(15, (hierarchyCanvas.width / prevLayer.count) * 0.4);
+
+                            for (let j = startIdx; j < endIdx; j++) {
+                                const prevSpacing = hierarchyCanvas.width / (prevLayer.count + 1);
+                                const prevX = prevSpacing * (j + 1);
+
+                                hierCtx.beginPath();
+                                hierCtx.moveTo(x, layer.y + radius);
+                                hierCtx.lineTo(prevX, prevLayer.y - prevRadius);
+                                hierCtx.stroke();
+                            }
                         }
                     }
-                }
 
-                hierCtx.fillStyle = '#f4f1e8';
-                hierCtx.font = '14px Cutive Mono';
-                hierCtx.textAlign = 'center';
-                hierCtx.fillText(layer.label, hierarchyCanvas.width / 2, layer.y - 30);
-            });
-        }
+                    hierCtx.fillStyle = '#f4f1e8';
+                    hierCtx.font = '14px Cutive Mono';
+                    hierCtx.textAlign = 'center';
+                    hierCtx.fillText(layer.label, hierarchyCanvas.width / 2, layer.y - 30);
+                });
+            }
 
-        document.getElementById('showL0').addEventListener('click', () => {
-            visibleLayers = [true, false, false];
-            drawHierarchy();
-        });
-
-        document.getElementById('showL1').addEventListener('click', () => {
-            visibleLayers = [false, true, false];
-            drawHierarchy();
-        });
-
-        document.getElementById('showL2').addEventListener('click', () => {
-            visibleLayers = [false, false, true];
-            drawHierarchy();
-        });
-
-        document.getElementById('showAll').addEventListener('click', () => {
-            visibleLayers = [true, true, true];
-            drawHierarchy();
-        });
-
-        // Query Visualization
-        const queryCanvas = document.getElementById('queryCanvas');
-        const queryCtx = queryCanvas.getContext('2d');
-
-        function animateQuery(startLayer) {
-            queryCtx.fillStyle = '#0f2027';
-            queryCtx.fillRect(0, 0, queryCanvas.width, queryCanvas.height);
-
-            const layers = [
-                { y: 400, label: 'Layer 0: Raw', color: '#ffd700' },
-                { y: 250, label: 'Layer 1: Patterns', color: '#4a9eff' },
-                { y: 100, label: 'Layer 2: Abstract', color: '#ff8c42' }
-            ];
-
-            // Draw layers
-            layers.forEach((layer, idx) => {
-                queryCtx.fillStyle = layer.color;
-                queryCtx.beginPath();
-                queryCtx.arc(400, layer.y, 20, 0, Math.PI * 2);
-                queryCtx.fill();
-
-                queryCtx.fillStyle = '#f4f1e8';
-                queryCtx.font = '14px Cutive Mono';
-                queryCtx.textAlign = 'center';
-                queryCtx.fillText(layer.label, 400, layer.y + 50);
+            document.getElementById('showL0').addEventListener('click', () => {
+                visibleLayers = [true, false, false];
+                drawHierarchy();
             });
 
-            // Animate query path
-            let step = 0;
-            const path = startLayer === 2 ? [2, 1, 0] : startLayer === 1 ? [1, 0] : [0];
-            
-            const interval = setInterval(() => {
-                if (step < path.length) {
-                    const layerIdx = path[step];
-                    queryCtx.strokeStyle = '#ff6b6b';
-                    queryCtx.lineWidth = 3;
+            document.getElementById('showL1').addEventListener('click', () => {
+                visibleLayers = [false, true, false];
+                drawHierarchy();
+            });
+
+            document.getElementById('showL2').addEventListener('click', () => {
+                visibleLayers = [false, false, true];
+                drawHierarchy();
+            });
+
+            document.getElementById('showAll').addEventListener('click', () => {
+                visibleLayers = [true, true, true];
+                drawHierarchy();
+            });
+
+            // Query Visualization
+            const queryCanvas = document.getElementById('queryCanvas');
+            const queryCtx = queryCanvas.getContext('2d');
+
+            function animateQuery(startLayer) {
+                queryCtx.fillStyle = '#0f2027';
+                queryCtx.fillRect(0, 0, queryCanvas.width, queryCanvas.height);
+
+                const layers = [
+                    { y: 400, label: 'Layer 0: Raw', color: '#ffd700' },
+                    { y: 250, label: 'Layer 1: Patterns', color: '#4a9eff' },
+                    { y: 100, label: 'Layer 2: Abstract', color: '#ff8c42' }
+                ];
+
+                // Draw layers
+                layers.forEach((layer, idx) => {
+                    queryCtx.fillStyle = layer.color;
                     queryCtx.beginPath();
-                    queryCtx.arc(400, layers[layerIdx].y, 30, 0, Math.PI * 2);
-                    queryCtx.stroke();
-                    
-                    if (step > 0) {
-                        const prevLayerIdx = path[step - 1];
+                    queryCtx.arc(400, layer.y, 20, 0, Math.PI * 2);
+                    queryCtx.fill();
+
+                    queryCtx.fillStyle = '#f4f1e8';
+                    queryCtx.font = '14px Cutive Mono';
+                    queryCtx.textAlign = 'center';
+                    queryCtx.fillText(layer.label, 400, layer.y + 50);
+                });
+
+                // Animate query path
+                let step = 0;
+                const path = startLayer === 2 ? [2, 1, 0] : startLayer === 1 ? [1, 0] : [0];
+
+                const interval = setInterval(() => {
+                    if (step < path.length) {
+                        const layerIdx = path[step];
+                        queryCtx.strokeStyle = '#ff6b6b';
+                        queryCtx.lineWidth = 3;
                         queryCtx.beginPath();
-                        queryCtx.moveTo(400, layers[prevLayerIdx].y + 20);
-                        queryCtx.lineTo(400, layers[layerIdx].y - 20);
+                        queryCtx.arc(400, layers[layerIdx].y, 30, 0, Math.PI * 2);
                         queryCtx.stroke();
+
+                        if (step > 0) {
+                            const prevLayerIdx = path[step - 1];
+                            queryCtx.beginPath();
+                            queryCtx.moveTo(400, layers[prevLayerIdx].y + 20);
+                            queryCtx.lineTo(400, layers[layerIdx].y - 20);
+                            queryCtx.stroke();
+                        }
+
+                        step++;
+                    } else {
+                        clearInterval(interval);
                     }
-                    
-                    step++;
-                } else {
-                    clearInterval(interval);
-                }
-            }, 500);
-        }
+                }, 500);
+            }
 
-        document.getElementById('queryRecent').addEventListener('click', () => animateQuery(0));
-        document.getElementById('queryOld').addEventListener('click', () => animateQuery(1));
-        document.getElementById('queryDeep').addEventListener('click', () => animateQuery(2));
+            document.getElementById('queryRecent').addEventListener('click', () => animateQuery(0));
+            document.getElementById('queryOld').addEventListener('click', () => animateQuery(1));
+            document.getElementById('queryDeep').addEventListener('click', () => animateQuery(2));
 
-        // Benchmark Visualization
-        const benchCanvas = document.getElementById('benchmarkCanvas');
-        const benchCtx = benchCanvas.getContext('2d');
+            // Benchmark Visualization
+            const benchCanvas = document.getElementById('benchmarkCanvas');
+            const benchCtx = benchCanvas.getContext('2d');
 
-        function drawBenchmark(gmmTimes, hnswTimes) {
-            benchCtx.fillStyle = '#0f2027';
-            benchCtx.fillRect(0, 0, benchCanvas.width, benchCanvas.height);
+            function drawBenchmark(gmmTimes, hnswTimes) {
+                benchCtx.fillStyle = '#0f2027';
+                benchCtx.fillRect(0, 0, benchCanvas.width, benchCanvas.height);
 
-            const maxTime = Math.max(...hnswTimes, ...gmmTimes);
-            const scaleY = 300 / maxTime;
-            const scaleX = benchCanvas.width / gmmTimes.length;
+                const maxTime = Math.max(...hnswTimes, ...gmmTimes);
+                const scaleY = 300 / maxTime;
+                const scaleX = benchCanvas.width / gmmTimes.length;
 
-            // Draw GMM line
-            benchCtx.strokeStyle = '#ffd700';
-            benchCtx.lineWidth = 3;
-            benchCtx.beginPath();
-            gmmTimes.forEach((time, idx) => {
-                const x = idx * scaleX + 50;
-                const y = 350 - time * scaleY;
-                if (idx === 0) benchCtx.moveTo(x, y);
-                else benchCtx.lineTo(x, y);
-            });
-            benchCtx.stroke();
+                // Draw GMM line
+                benchCtx.strokeStyle = '#ffd700';
+                benchCtx.lineWidth = 3;
+                benchCtx.beginPath();
+                gmmTimes.forEach((time, idx) => {
+                    const x = idx * scaleX + 50;
+                    const y = 350 - time * scaleY;
+                    if (idx === 0) benchCtx.moveTo(x, y);
+                    else benchCtx.lineTo(x, y);
+                });
+                benchCtx.stroke();
 
-            // Draw HNSW line
-            benchCtx.strokeStyle = '#ff6b6b';
-            benchCtx.lineWidth = 3;
-            benchCtx.beginPath();
-            hnswTimes.forEach((time, idx) => {
-                const x = idx * scaleX + 50;
-                const y = 350 - time * scaleY;
-                if (idx === 0) benchCtx.moveTo(x, y);
-                else benchCtx.lineTo(x, y);
-            });
-            benchCtx.stroke();
+                // Draw HNSW line
+                benchCtx.strokeStyle = '#ff6b6b';
+                benchCtx.lineWidth = 3;
+                benchCtx.beginPath();
+                hnswTimes.forEach((time, idx) => {
+                    const x = idx * scaleX + 50;
+                    const y = 350 - time * scaleY;
+                    if (idx === 0) benchCtx.moveTo(x, y);
+                    else benchCtx.lineTo(x, y);
+                });
+                benchCtx.stroke();
 
-            // Draw legend
-            benchCtx.fillStyle = '#ffd700';
-            benchCtx.fillRect(50, 30, 30, 10);
-            benchCtx.fillStyle = '#f4f1e8';
-            benchCtx.font = '14px Cutive Mono';
-            benchCtx.fillText('GMM (O(1))', 90, 40);
+                // Draw legend
+                benchCtx.fillStyle = '#ffd700';
+                benchCtx.fillRect(50, 30, 30, 10);
+                benchCtx.fillStyle = '#f4f1e8';
+                benchCtx.font = '14px Cutive Mono';
+                benchCtx.fillText('GMM (O(1))', 90, 40);
 
-            benchCtx.fillStyle = '#ff6b6b';
-            benchCtx.fillRect(50, 50, 30, 10);
-            benchCtx.fillStyle = '#f4f1e8';
-            benchCtx.fillText('HNSW (O(log N))', 90, 60);
+                benchCtx.fillStyle = '#ff6b6b';
+                benchCtx.fillRect(50, 50, 30, 10);
+                benchCtx.fillStyle = '#f4f1e8';
+                benchCtx.fillText('HNSW (O(log N))', 90, 60);
 
-            // Axes
-            benchCtx.strokeStyle = '#f4f1e8';
-            benchCtx.lineWidth = 1;
-            benchCtx.beginPath();
-            benchCtx.moveTo(50, 350);
-            benchCtx.lineTo(750, 350);
-            benchCtx.moveTo(50, 50);
-            benchCtx.lineTo(50, 350);
-            benchCtx.stroke();
+                // Axes
+                benchCtx.strokeStyle = '#f4f1e8';
+                benchCtx.lineWidth = 1;
+                benchCtx.beginPath();
+                benchCtx.moveTo(50, 350);
+                benchCtx.lineTo(750, 350);
+                benchCtx.moveTo(50, 50);
+                benchCtx.lineTo(50, 350);
+                benchCtx.stroke();
 
-            benchCtx.fillStyle = '#f4f1e8';
-            benchCtx.font = '12px Cutive Mono';
-            benchCtx.textAlign = 'center';
-            benchCtx.fillText('Memory Depth (thousands)', 400, 380);
-            
-            benchCtx.save();
-            benchCtx.translate(20, 200);
-            benchCtx.rotate(-Math.PI / 2);
-            benchCtx.fillText('Retrieval Time (ms)', 0, 0);
-            benchCtx.restore();
-        }
+                benchCtx.fillStyle = '#f4f1e8';
+                benchCtx.font = '12px Cutive Mono';
+                benchCtx.textAlign = 'center';
+                benchCtx.fillText('Memory Depth (thousands)', 400, 380);
 
-        document.getElementById('runBenchmark').addEventListener('click', () => {
-            const depths = [1, 10, 100, 1000, 10000];
-            const gmmTimes = depths.map(() => 5 + Math.random() * 2); // Constant time
-            const hnswTimes = depths.map((d, i) => 5 + Math.log2(d) * 3 + Math.random() * 2);
+                benchCtx.save();
+                benchCtx.translate(20, 200);
+                benchCtx.rotate(-Math.PI / 2);
+                benchCtx.fillText('Retrieval Time (ms)', 0, 0);
+                benchCtx.restore();
+            }
 
-            let frame = 0;
-            const interval = setInterval(() => {
-                if (frame <= gmmTimes.length) {
-                    drawBenchmark(
-                        gmmTimes.slice(0, frame),
-                        hnswTimes.slice(0, frame)
-                    );
-                    frame++;
+            document.getElementById('runBenchmark').addEventListener('click', () => {
+                const depths = [1, 10, 100, 1000, 10000];
+                const gmmTimes = depths.map(() => 5 + Math.random() * 2); // Constant time
+                const hnswTimes = depths.map((d, i) => 5 + Math.log2(d) * 3 + Math.random() * 2);
 
-                    if (frame === gmmTimes.length) {
-                        document.getElementById('gmmTime').textContent = 
-                            gmmTimes[gmmTimes.length - 1].toFixed(1) + 'ms';
-                        document.getElementById('hnswTime').textContent = 
-                            hnswTimes[hnswTimes.length - 1].toFixed(1) + 'ms';
-                        document.getElementById('speedup').textContent = 
-                            (hnswTimes[hnswTimes.length - 1] / gmmTimes[gmmTimes.length - 1]).toFixed(1) + 'x';
+                let frame = 0;
+                const interval = setInterval(() => {
+                    if (frame <= gmmTimes.length) {
+                        drawBenchmark(
+                            gmmTimes.slice(0, frame),
+                            hnswTimes.slice(0, frame)
+                        );
+                        frame++;
+
+                        if (frame === gmmTimes.length) {
+                            document.getElementById('gmmTime').textContent =
+                                gmmTimes[gmmTimes.length - 1].toFixed(1) + 'ms';
+                            document.getElementById('hnswTime').textContent =
+                                hnswTimes[hnswTimes.length - 1].toFixed(1) + 'ms';
+                            document.getElementById('speedup').textContent =
+                                (hnswTimes[hnswTimes.length - 1] / gmmTimes[gmmTimes.length - 1]).toFixed(1) + 'x';
+                        }
+                    } else {
+                        clearInterval(interval);
                     }
-                } else {
-                    clearInterval(interval);
-                }
-            }, 300);
-        });
+                }, 300);
+            });
 
-        document.getElementById('resetBenchmark').addEventListener('click', () => {
-            benchCtx.fillStyle = '#0f2027';
-            benchCtx.fillRect(0, 0, benchCanvas.width, benchCanvas.height);
-            document.getElementById('gmmTime').textContent = '0ms';
-            document.getElementById('hnswTime').textContent = '0ms';
-            document.getElementById('speedup').textContent = '0x';
-        });
+            document.getElementById('resetBenchmark').addEventListener('click', () => {
+                benchCtx.fillStyle = '#0f2027';
+                benchCtx.fillRect(0, 0, benchCanvas.width, benchCanvas.height);
+                document.getElementById('gmmTime').textContent = '0ms';
+                document.getElementById('hnswTime').textContent = '0ms';
+                document.getElementById('speedup').textContent = '0x';
+            });
 
-        // Initialize all visualizations
-        drawSpiral();
-        drawHierarchy();
-        drawBenchmark([], []);
-    </script>
+            // Initialize all visualizations
+            drawSpiral();
+            drawHierarchy();
+            drawBenchmark([], []);
+        </script>
 </body>
+
 </html>
