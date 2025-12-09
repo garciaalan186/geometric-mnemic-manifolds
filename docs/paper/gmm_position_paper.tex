@@ -1,0 +1,844 @@
+\documentclass[11pt, a4paper]{article}
+
+% --- GEOMETRY AND LAYOUT ---
+\usepackage[a4paper, top=2.5cm, bottom=2.5cm, left=2.5cm, right=2.5cm]{geometry}
+
+% --- FONTS (using standard LaTeX fonts for compatibility) ---
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+
+% --- MATHEMATICS ---
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{mathtools}
+\usepackage{thmtools}
+
+% --- FORMATTING ---
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{xcolor}
+\usepackage{graphicx}
+
+% --- ALGORITHMS ---
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+
+% --- HYPERLINKS ---
+\usepackage[colorlinks=true,linkcolor=blue!60!black,citecolor=green!50!black,urlcolor=blue!70!black]{hyperref}
+
+% --- BIBLIOGRAPHY ---
+\usepackage[numbers,sort&compress]{natbib}
+
+% --- THEOREM ENVIRONMENTS ---
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{assumption}[theorem]{Assumption}
+\newtheorem{example}[theorem]{Example}
+
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{notation}[theorem]{Notation}
+\newtheorem{openquestion}{Open Question}
+
+% --- CUSTOM COMMANDS ---
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Var}{\mathrm{Var}}
+\newcommand{\bigO}{\mathcal{O}}
+\newcommand{\manifold}{\mathcal{M}}
+\newcommand{\engram}{\varepsilon}
+\newcommand{\query}{\mathbf{q}}
+\newcommand{\embed}{\mathbf{e}}
+\newcommand{\sphere}{\mathbb{S}}
+\newcommand{\frac}[2]{\frac{#1}{#2}}
+\DeclareMathOperator{\erf}{erf}
+\DeclareMathOperator{\erfinv}{erf^{-1}}
+\DeclareMathOperator{\softmax}{softmax}
+\DeclareMathOperator{\entropy}{H}
+
+% --- TITLE ---
+\title{
+    \textbf{Geometric Mnemic Manifolds: A Position Paper} \\[0.5em]
+    \large Toward Structured Memory Architectures for Persistent AI Agency \\[0.3em]
+    \normalsize\textit{With Formal Complexity Analysis and Research Agenda}
+}
+
+\author{
+    Alan Garcia \\
+    \textit{Independent Researcher} \\
+    \texttt{alan.javier.garcia@gmail.com}
+}
+
+\date{December 8, 2025 \\ \small Version 3.0 (Position Paper)}
+
+% === DOCUMENT BEGIN ===
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+\noindent\textbf{Status: Theoretical Specification.} This paper presents the \textbf{Geometric Mnemic Manifold (GMM)}, a proposed memory architecture for large language models that externalizes the Key-Value cache to a distributed store with geometrically enforced sparse attention. We provide formal complexity proofs for coordinate addressing ($\bigO(1)$), hierarchical retrieval ($\bigO(\log N)$), and active edge bounds. Crucially, we distinguish proven properties from conjectured benefits, identify critical validation gates, and frame GMM as a \emph{research agenda} rather than a proven solution. The core innovations---entropy-gated reification, polynomial temporal decay, and Kronecker-sequence addressing---are presented with mathematical rigor where possible and honest acknowledgment of open problems where not. We argue that the fundamental question facing AI memory systems is not capacity but \emph{structure}: whether raw context windows suffice for deployed agency or whether architectural organization is necessary for auditability, compositionality, and long-horizon coherence.
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+%=============================================================================
+\section{Introduction and Motivation}
+%=============================================================================
+
+\subsection{The Context Window Arms Race}
+
+Current foundation models pursue memory through architectural brute force: extending token windows from 4K to 128K to 1M tokens and beyond. This approach implicitly assumes that \emph{capacity} alone solves the memory problem. We argue this assumption is flawed for deployed, long-lived AI agents.
+
+\begin{enumerate}[label=(\roman*)]
+    \item \textbf{Quadratic Attention Cost}: Standard self-attention computes $\text{Attention}(Q,K,V) = \softmax\left(\frac{QK^\top}{\sqrt{d_k}}\right)V$, requiring $\bigO(N^2)$ operations in sequence length $N$. Despite advances in sparse attention \cite{child2019sparse, beltagy2020longformer}, ultra-long contexts remain computationally prohibitive.
+    
+    \item \textbf{Black Box Explainability}: When a 10M-token context produces an error, identifying the causative information becomes archaeologically complex. There is no principled way to audit which memories influenced a decision.
+    
+    \item \textbf{Architectural Rigidity}: Merging knowledge from multiple specialized agents requires either full retraining or fragile prompt engineering. Context windows do not compose.
+\end{enumerate}
+
+\subsection{Thesis Statement}
+
+\begin{quote}
+\textit{The Geometric Mnemic Manifold proposes that persistent AI agency requires \textbf{structured memory}---an explicit separation of fluid reasoning (the kernel) from crystallized knowledge (the manifold)---with geometric organization enabling formal guarantees on retrieval complexity, auditability, and compositionality.}
+\end{quote}
+
+\subsection{Scope and Epistemic Status}
+
+This is a \textbf{position paper} presenting a research agenda. We distinguish:
+
+\begin{itemize}
+    \item \textbf{Proven}: Mathematical properties of the geometric construction (Section~\ref{sec:formal})
+    \item \textbf{Conjectured}: Benefits for AI systems (auditability, compositionality)
+    \item \textbf{Unvalidated}: Whether the architecture works in practice (requires empirical testing per Section~\ref{sec:validation})
+\end{itemize}
+
+We have not built a production system. The value of this paper lies in (a) formalizing the mathematical framework, (b) identifying critical validation gates, and (c) stimulating research in structured memory for AI.
+
+%=============================================================================
+\section{Related Work}
+\label{sec:related}
+%=============================================================================
+
+GMM builds on and differs from several lines of research.
+
+\subsection{Memory-Augmented Neural Networks}
+
+\textbf{Neural Turing Machines (NTM)} \cite{graves2014neural} and \textbf{Differentiable Neural Computers (DNC)} \cite{graves2016hybrid} introduced external memory banks with learned read/write heads. GMM differs in using \emph{geometric} rather than \emph{learned} addressing, trading flexibility for formal guarantees.
+
+\subsection{Retrieval-Augmented Generation}
+
+\textbf{RAG} systems \cite{lewis2020retrieval} retrieve relevant documents via similarity search before generation. \textbf{RETRO} \cite{borgeaud2022improving} scales this to trillions of tokens with chunked cross-attention. GMM differs by:
+\begin{itemize}
+    \item Encoding temporal structure geometrically (not as metadata)
+    \item Hierarchical abstraction (L0/L1/L2) rather than flat retrieval
+    \item Deterministic addressing rather than approximate nearest neighbor
+\end{itemize}
+
+\subsection{Long-Context Transformers}
+
+\textbf{Longformer} \cite{beltagy2020longformer} and \textbf{BigBird} \cite{zaheer2020big} use sparse attention patterns to achieve linear scaling. GMM's geometric sparsity is \emph{enforced by topology} rather than learned, providing formal guarantees at the cost of flexibility.
+
+\subsection{Agent Memory Systems}
+
+\textbf{Generative Agents} \cite{park2023generative} maintain memory streams with recency-importance-relevance scoring. \textbf{MemGPT} \cite{packer2023memgpt} introduces tiered memory management. GMM differs by:
+\begin{itemize}
+    \item Geometric encoding of time (radial coordinate) vs. metadata tags
+    \item Formal complexity bounds vs. heuristic scoring
+    \item Hierarchical semantic compression vs. flat storage
+\end{itemize}
+
+\subsection{Discrepancy Theory}
+
+GMM's use of Kronecker sequences derives from \textbf{quasi-Monte Carlo} methods \cite{niederreiter1992random}. The low-discrepancy property ensures uniform coverage of the hypersphere, which we exploit for memory addressing.
+
+%=============================================================================
+\section{Formal Framework}
+\label{sec:formal}
+%=============================================================================
+
+We now present the mathematical foundations of GMM with formal definitions, theorems, and proofs.
+
+\subsection{Notation}
+
+\begin{notation}
+Throughout this paper:
+\begin{itemize}
+    \item $N \in \N$ denotes the total number of engrams (memory units)
+    \item $d \in \N$ denotes embedding dimension (typically 768--4096)
+    \item $\sphere^{d-1} = \{\mathbf{x} \in \R^d : \|\mathbf{x}\| = 1\}$ is the unit hypersphere
+    \item $\{x\} = x - \lfloor x \rfloor$ denotes the fractional part
+    \item $\alpha = (\sqrt{p_1}, \sqrt{p_2}, \ldots, \sqrt{p_{d-1}})$ for distinct primes $p_i$
+\end{itemize}
+\end{notation}
+
+\subsection{The Engram and the Manifold}
+
+\begin{definition}[Engram]
+\label{def:engram}
+An \textbf{engram} is a tuple $\engram_k = (k, W_k, \embed_k, t_k, H_k)$ where:
+\begin{itemize}
+    \item $k \in \N$ is the temporal index
+    \item $W_k$ is the serialized context window (tokens) at time $t_k$
+    \item $\embed_k \in \R^d$ is the embedding vector
+    \item $t_k \in \R_{\geq 0}$ is the timestamp
+    \item $H_k \in \R_{\geq 0}$ is the attention entropy at creation (Definition~\ref{def:entropy})
+\end{itemize}
+\end{definition}
+
+\begin{definition}[Geometric Mnemic Manifold]
+\label{def:manifold}
+A \textbf{Geometric Mnemic Manifold} is a triple $\manifold = (\mathcal{E}, \phi, \mathcal{L})$ where:
+\begin{itemize}
+    \item $\mathcal{E} = \{\engram_0, \engram_1, \ldots, \engram_{N-1}\}$ is the set of engrams
+    \item $\phi: \N \to \sphere^{d-1} \times \R_{>0}$ is the coordinate function (Definition~\ref{def:coords})
+    \item $\mathcal{L} = (L_0, L_1, L_2)$ is the hierarchical layer structure (Definition~\ref{def:layers})
+\end{itemize}
+\end{definition}
+
+\subsection{Kronecker Sequence Addressing}
+
+\begin{definition}[Coordinate Function]
+\label{def:coords}
+The coordinate function $\phi: \N \to \sphere^{d-1} \times \R_{>0}$ maps temporal index $k$ to position $(\mathbf{u}_k, r_k)$ via:
+\begin{align}
+    \mathbf{u}_k &= \mathcal{N}\left(\erfinv(2\{k\alpha_1\} - 1), \ldots, \erfinv(2\{k\alpha_{d-1}\} - 1)\right) \label{eq:angular}\\
+    r_k &= (1 + k)^{-\gamma} \quad \text{for } \gamma > 0 \label{eq:radial}
+\end{align}
+where $\mathcal{N}: \R^{d-1} \to \sphere^{d-1}$ normalizes to the unit sphere and $\alpha_i = \sqrt{p_i}$ for the $i$-th prime.
+\end{definition}
+
+\begin{remark}[Choice of Radial Function]
+We use polynomial decay $(1+k)^{-\gamma}$ rather than exponential decay $e^{-\lambda k}$ to preserve heavy-tailed retrieval probability. At $k = 10^6$ with $\lambda = 0.015$: $e^{-\lambda k} \approx e^{-15000} \approx 0$, while $(1+k)^{-1} \approx 10^{-6}$. The polynomial form ensures ancient but highly relevant memories retain non-negligible accessibility.
+\end{remark}
+
+\begin{theorem}[O(1) Address Calculation]
+\label{thm:o1address}
+For any temporal index $k \in \N$, the coordinate $\phi(k) = (\mathbf{u}_k, r_k)$ can be computed in $\bigO(d)$ time, which is $\bigO(1)$ for fixed embedding dimension $d$.
+\end{theorem}
+
+\begin{proof}
+The computation of $\phi(k)$ requires:
+\begin{enumerate}
+    \item Computing $\{k\alpha_i\}$ for $i = 1, \ldots, d-1$: Each fractional part requires one multiplication and one floor operation, giving $\bigO(d-1) = \bigO(d)$ operations.
+    
+    \item Computing $\erfinv(2\{k\alpha_i\} - 1)$: The inverse error function can be computed to machine precision via rational approximations in $\bigO(1)$ per coordinate \cite{winitzki2008uniform}, giving $\bigO(d)$ total.
+    
+    \item Normalization $\mathcal{N}$: Computing the norm requires $\bigO(d)$ operations (sum of squares, square root) and dividing each component requires $\bigO(d)$.
+    
+    \item Radial coordinate: $(1+k)^{-\gamma}$ requires $\bigO(1)$ operations.
+\end{enumerate}
+Total: $\bigO(d)$. For fixed $d$ (a constant in typical applications where $d \in \{768, 1024, 1536, 4096\}$), this is $\bigO(1)$.
+\end{proof}
+
+\begin{remark}[Address vs. Retrieval]
+Theorem~\ref{thm:o1address} proves that \emph{computing coordinates} is $\bigO(1)$. This does \textbf{not} imply that \emph{retrieval} is $\bigO(1)$. Retrieval requires:
+\begin{enumerate}
+    \item Address calculation: $\bigO(1)$ (proven)
+    \item Storage lookup: $\bigO(1)$ with hash tables, $\bigO(\log N)$ with B-trees
+    \item Semantic matching: $\bigO(k)$ for comparing query to $k$ candidates
+\end{enumerate}
+The full retrieval complexity depends on implementation and is analyzed in Section~\ref{sec:retrieval}.
+\end{remark}
+
+\subsection{Low-Discrepancy Coverage}
+
+\begin{definition}[Star Discrepancy]
+For a point set $P = \{\mathbf{x}_1, \ldots, \mathbf{x}_N\} \subset [0,1)^d$, the \textbf{star discrepancy} is:
+\begin{equation}
+    D_N^*(P) = \sup_{\mathbf{y} \in [0,1]^d} \left| \frac{|\{i : \mathbf{x}_i \in [0, \mathbf{y})\}|}{N} - \prod_{j=1}^d y_j \right|
+\end{equation}
+where $[0, \mathbf{y}) = [0, y_1) \times \cdots \times [0, y_d)$.
+\end{definition}
+
+\begin{theorem}[Kronecker Sequence Discrepancy {\cite[Theorem 3.6]{kuipers1974uniform}}]
+\label{thm:discrepancy}
+Let $\alpha = (\alpha_1, \ldots, \alpha_d)$ where $1, \alpha_1, \ldots, \alpha_d$ are linearly independent over $\Q$. The sequence $\mathbf{x}_k = \{k\alpha\}$ satisfies:
+\begin{equation}
+    D_N^*(\{\mathbf{x}_1, \ldots, \mathbf{x}_N\}) = \bigO\left(\frac{(\log N)^d}{N}\right)
+\end{equation}
+\end{theorem}
+
+\begin{corollary}[Uniform Angular Coverage]
+\label{cor:coverage}
+The angular components $\mathbf{u}_k$ of GMM coordinates are equidistributed on $\sphere^{d-1}$ in the sense that for any measurable $A \subseteq \sphere^{d-1}$:
+\begin{equation}
+    \lim_{N \to \infty} \frac{|\{k \leq N : \mathbf{u}_k \in A\}|}{N} = \frac{\text{vol}(A)}{\text{vol}(\sphere^{d-1})}
+\end{equation}
+\end{corollary}
+
+\begin{proof}
+The map $\mathbf{z} \mapsto \mathcal{N}(\erfinv(2z_1-1), \ldots, \erfinv(2z_{d-1}-1))$ is measure-preserving from $[0,1)^{d-1}$ with Lebesgue measure to $\sphere^{d-1}$ with uniform measure. By Weyl's equidistribution theorem and Theorem~\ref{thm:discrepancy}, the sequence $\{k\alpha\}$ is equidistributed in $[0,1)^{d-1}$, hence the transformed sequence is equidistributed on $\sphere^{d-1}$.
+\end{proof}
+
+\subsection{Hierarchical Layer Structure}
+
+\begin{definition}[Layer Structure]
+\label{def:layers}
+Given parameters $\beta_1, \beta_2 \in \N$ (default: $\beta_1 = 64$, $\beta_2 = 16$), define:
+\begin{align}
+    L_0 &= \mathcal{E} \quad \text{(raw episodic engrams)} \\
+    |L_1| &= \left\lceil \frac{N}{\beta_1} \right\rceil \quad \text{(synthesized pattern nodes)} \\
+    |L_2| &= \left\lceil \frac{N}{\beta_1 \cdot \beta_2} \right\rceil \quad \text{(semantic axiom nodes)}
+\end{align}
+Each $L_1$ node summarizes $\beta_1$ consecutive $L_0$ engrams via a telegraphic compressor $\Lambda$.
+Each $L_2$ node abstracts $\beta_2$ consecutive $L_1$ nodes.
+\end{definition}
+
+\begin{definition}[Foveated Connectivity]
+\label{def:fovea}
+Let $k_{\text{fovea}} \in \N$ (default: 10) and $k_{\text{para}} = \beta_1$. The active agent at position 0 maintains connections:
+\begin{itemize}
+    \item \textbf{Fovea}: Direct edges to all $\engram_k$ with $k < k_{\text{fovea}}$
+    \item \textbf{Para-fovea}: Direct edges to all $L_1$ nodes covering $k \in [k_{\text{fovea}}, k_{\text{para}})$
+    \item \textbf{Periphery}: Direct edges to all $L_2$ nodes covering $k \geq k_{\text{para}}$
+\end{itemize}
+\end{definition}
+
+\begin{theorem}[Active Edge Bound]
+\label{thm:edges}
+Under the foveated connectivity of Definition~\ref{def:fovea}, the number of active edges $E(N)$ satisfies:
+\begin{equation}
+    E(N) = k_{\text{fovea}} + \left\lceil \frac{k_{\text{para}} - k_{\text{fovea}}}{\beta_1} \right\rceil + \left\lceil \frac{N - k_{\text{para}}}{\beta_1 \cdot \beta_2} \right\rceil
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+By Definition~\ref{def:fovea}:
+\begin{enumerate}
+    \item Foveal edges: exactly $k_{\text{fovea}}$ (connecting to raw engrams $k < k_{\text{fovea}}$)
+    \item Para-foveal edges: the para-foveal region spans indices $[k_{\text{fovea}}, k_{\text{para}})$, covered by $\lceil(k_{\text{para}} - k_{\text{fovea}})/\beta_1\rceil$ $L_1$ nodes
+    \item Peripheral edges: indices $[k_{\text{para}}, N)$ are covered by $\lceil(N - k_{\text{para}})/(\beta_1 \cdot \beta_2)\rceil$ $L_2$ nodes
+\end{enumerate}
+Summing gives the stated formula.
+\end{proof}
+
+\begin{corollary}[Linear Growth with Small Constant]
+\label{cor:linear}
+For the default parameters ($k_{\text{fovea}} = 10$, $k_{\text{para}} = 64$, $\beta_1 = 64$, $\beta_2 = 16$):
+\begin{equation}
+    E(N) = 10 + 1 + \left\lceil \frac{N - 64}{1024} \right\rceil \approx 11 + \frac{N}{1024}
+\end{equation}
+This is $\bigO(N)$ growth, but with a factor of $\approx 1/1000$ improvement over naive $\bigO(N)$.
+\end{corollary}
+
+\begin{remark}[Honest Complexity Assessment]
+Earlier versions of this work claimed $\bigO(1)$ active edges. This is \textbf{incorrect}. Corollary~\ref{cor:linear} shows linear growth. The improvement over naive storage is a constant factor ($\approx 1000\times$), which is significant in practice but does not change asymptotic complexity.
+
+True $\bigO(\log N)$ active edges would require recursive hierarchical layers (L3, L4, ...) with logarithmic depth. This is an open design question (Section~\ref{sec:open}).
+\end{remark}
+
+\subsection{Retrieval Complexity}
+\label{sec:retrieval}
+
+\begin{definition}[Dual-Metric Retrieval]
+Given query embedding $\query \in \R^d$ and engram $\engram_k$ with embedding $\embed_k$, the \textbf{retrievability score} is:
+\begin{equation}
+    R(\query, \engram_k) = \text{sim}(\query, \embed_k) \cdot r_k^\rho
+\end{equation}
+where $\text{sim}(\cdot, \cdot)$ is cosine similarity and $\rho > 0$ controls temporal weighting.
+\end{definition}
+
+\begin{theorem}[Hierarchical Retrieval Complexity]
+\label{thm:retrieval}
+The GMM retrieval algorithm (Algorithm~\ref{alg:retrieval}) runs in:
+\begin{equation}
+    T(N) = \bigO\left(k_{\text{fovea}} + |L_1| + \beta_1\right) = \bigO\left(k_{\text{fovea}} + \frac{N}{\beta_1} + \beta_1\right)
+\end{equation}
+For fixed $k_{\text{fovea}}$ and $\beta_1$, this is $\bigO(N/\beta_1) = \bigO(N)$ but with a $1/64$ constant factor reduction.
+\end{theorem}
+
+\begin{proof}
+Algorithm~\ref{alg:retrieval} performs:
+\begin{enumerate}
+    \item Foveal scan: Compare query to $k_{\text{fovea}}$ engrams: $\bigO(k_{\text{fovea}} \cdot d)$
+    \item Pattern broadcast: Compare query to $|L_1| = \lceil N/\beta_1 \rceil$ summary nodes: $\bigO(|L_1| \cdot d)$
+    \item Drill-down: If a $L_1$ node matches, examine its $\beta_1$ children: $\bigO(\beta_1 \cdot d)$
+\end{enumerate}
+Total: $\bigO((k_{\text{fovea}} + |L_1| + \beta_1) \cdot d)$. For fixed $d$, this reduces to the stated bound.
+\end{proof}
+
+\begin{algorithm}[t]
+\caption{Hierarchical GMM Retrieval}
+\label{alg:retrieval}
+\begin{algorithmic}[1]
+\Require Query $\query$, manifold $\manifold$, threshold $\tau$
+\Ensure Top-$k$ matching engrams
+\State $\text{candidates} \gets \emptyset$
+\Comment{Phase 1: Foveal scan}
+\For{$i = 0$ to $k_{\text{fovea}} - 1$}
+    \If{$R(\query, \engram_i) > \tau$}
+        \State $\text{candidates} \gets \text{candidates} \cup \{\engram_i\}$
+    \EndIf
+\EndFor
+\Comment{Phase 2: Pattern broadcast}
+\For{each $\ell \in L_1$}
+    \If{$\text{sim}(\query, \embed_\ell) > \tau$}
+        \Comment{Phase 3: Drill-down}
+        \For{each child $\engram_j$ of $\ell$}
+            \If{$R(\query, \engram_j) > \tau$}
+                \State $\text{candidates} \gets \text{candidates} \cup \{\engram_j\}$
+            \EndIf
+        \EndFor
+    \EndIf
+\EndFor
+\State \Return top-$k$ from candidates by $R(\query, \cdot)$
+\end{algorithmic}
+\end{algorithm}
+
+\begin{remark}[Achieving True O(log N) Retrieval]
+To achieve $\bigO(\log N)$ retrieval, one would need:
+\begin{enumerate}
+    \item \textbf{Recursive hierarchy}: $L_3, L_4, \ldots$ with depth $\bigO(\log N)$
+    \item \textbf{Constant branching factor}: Each node has $\bigO(1)$ children
+    \item \textbf{Learned routing}: A classifier to navigate the hierarchy without exhaustive scan
+\end{enumerate}
+This is an open research direction (Open Question~\ref{oq:logn}).
+\end{remark}
+
+%=============================================================================
+\section{Entropy-Gated Reification}
+\label{sec:entropy}
+%=============================================================================
+
+A critical question for any external memory system is: which states warrant full computational instantiation? We propose an information-theoretic criterion.
+
+\subsection{Attention Entropy}
+
+\begin{definition}[Attention Entropy]
+\label{def:entropy}
+Let $A_t \in \R^{n \times n}$ be the attention matrix at time $t$, with rows $\mathbf{a}_i = \softmax(\mathbf{q}_i^\top K / \sqrt{d_k})$. The \textbf{attention entropy} is:
+\begin{equation}
+    \entropy(A_t) = -\frac{1}{n} \sum_{i=1}^n \sum_{j=1}^n a_{ij} \log a_{ij}
+\end{equation}
+\end{definition}
+
+\begin{remark}[Interpretation]
+High entropy ($\entropy \to \log n$) indicates diffuse attention---the model is ``uncertain'' and attending broadly. Low entropy ($\entropy \to 0$) indicates focused attention on few tokens. We hypothesize that high-entropy states represent cognitively complex moments warranting preservation.
+\end{remark}
+
+\subsection{The Reification Criterion}
+
+\begin{definition}[Reification Function]
+\label{def:reify}
+A stored state $S_t$ is \textbf{reified} (promoted to active computational instance) if:
+\begin{equation}
+    \text{Reify}(t) = \begin{cases}
+        \text{True} & \text{if } (t_{\text{now}} - t) < \tau_{\text{recency}}, \text{ or} \\
+        \text{True} & \text{if } \entropy(A_t) > \theta_{\text{threshold}} \\
+        \text{False} & \text{otherwise}
+    \end{cases}
+\end{equation}
+\end{definition}
+
+\begin{remark}[Computational Cost of Entropy]
+\label{rem:entropy-cost}
+Computing $\entropy(A_t)$ exactly requires access to the full attention matrix, which has $\bigO(n^2)$ entries. This creates a circularity: we must compute expensive attention to decide whether to \emph{store} the state.
+
+\textbf{Proposed mitigation}: Use a proxy measure:
+\begin{enumerate}
+    \item \textbf{Output perplexity}: High perplexity in generated tokens correlates with attention uncertainty
+    \item \textbf{Foveal entropy}: Compute entropy over only the $k_{\text{fovea}}$ most recent attention rows
+    \item \textbf{Learned classifier}: Train a small network to predict ``interestingness'' from hidden states
+\end{enumerate}
+Empirical validation of these proxies is required (Section~\ref{sec:validation}, Phase 0).
+\end{remark}
+
+%=============================================================================
+\section{The Recursive Reasoning Kernel}
+\label{sec:rrk}
+%=============================================================================
+
+\subsection{Definition and Role}
+
+\begin{definition}[Recursive Reasoning Kernel]
+The \textbf{RRK} is a language model $\mathcal{M}_\theta$ optimized for:
+\begin{enumerate}
+    \item \textbf{Fluid intelligence}: Reasoning, synthesis, and planning
+    \item \textbf{Epistemic gap detection}: Recognizing when required information is absent from context
+    \item \textbf{Bus signaling}: Emitting a special token \texttt{<SIGNAL\_BUS>} to trigger manifold retrieval
+\end{enumerate}
+Candidate architectures: Phi-3 Mini (3.8B), Qwen 2.5 (0.5B--7B).
+\end{definition}
+
+\subsection{Epistemic Regularization}
+
+\begin{definition}[Signal Loss]
+\label{def:signal-loss}
+Let $\mathcal{D}_{\text{gap}}$ be a distribution over $(q, W, m)$ where $q$ is a query, $W$ is (possibly masked) context, and $m \in \{0,1\}$ indicates whether $W$ contains sufficient information. Define:
+\begin{equation}
+    \mathcal{L}_{\text{signal}} = -\mathbb{E}_{(q,W,m) \sim \mathcal{D}_{\text{gap}}} \left[ (1-m) \log p_\theta(s|q,W) + m \log(1 - p_\theta(s|q,W)) \right]
+\end{equation}
+where $s = \texttt{<SIGNAL\_BUS>}$ and $p_\theta(s|q,W)$ is the probability the RRK emits $s$ as first response token.
+\end{definition}
+
+\begin{definition}[Total Training Loss]
+The RRK is trained on:
+\begin{equation}
+    \mathcal{L}_{\text{total}} = \mathcal{L}_{\text{LM}} + \lambda \mathcal{L}_{\text{signal}}
+\end{equation}
+where $\mathcal{L}_{\text{LM}}$ is standard language modeling loss and $\lambda \in [0.3, 0.7]$ balances the objectives.
+\end{definition}
+
+\begin{remark}[Critical Validation Gate]
+The entire GMM architecture depends on the RRK reliably detecting epistemic gaps. If small models cannot learn this with $\geq 90\%$ precision and recall, GMM collapses to standard RAG with extra complexity. This is the \textbf{make-or-break} validation (Phase 0, Section~\ref{sec:validation}).
+\end{remark}
+
+%=============================================================================
+\section{Value Propositions}
+\label{sec:value}
+%=============================================================================
+
+We claim GMM offers advantages over standard approaches. These are \textbf{conjectures} requiring empirical validation.
+
+\subsection{Geometric Auditability}
+
+\textbf{Claim}: Because engram positions are deterministic functions of temporal index, retrieval paths are reproducible.
+
+\textbf{Mechanism}: Same query $\query$ at same manifold state $\to$ same Kronecker coordinates $\to$ identical candidate engrams.
+
+\textbf{Limitation}: This provides auditability of \emph{geometric access patterns}, not semantic encoding. Why the embedding model places $\query$ near certain engrams remains opaque.
+
+\textbf{Value}: Significant improvement over stochastic indices (HNSW) where rebuilding subtly changes neighbors. Essential for regulated industries.
+
+\subsection{Compositional Potential}
+
+\textbf{Claim}: Multiple manifolds can be mounted to a single RRK because they share a universal address space (the Kronecker spiral).
+
+\textbf{Requirements}:
+\begin{enumerate}
+    \item \textbf{Embedding alignment}: All agents must use identical embedding models
+    \item \textbf{Semantic drift mitigation}: Manifolds from different time periods may encode incompatible semantics
+\end{enumerate}
+
+\textbf{Value}: Enables asynchronous knowledge scaling without centralized retraining.
+
+\subsection{Index-Free Instantiation}
+
+\textbf{Claim}: GMM eliminates index loading overhead because the ``index'' is an equation (Theorem~\ref{thm:o1address}).
+
+\textbf{Reality check}: Agent startup still requires:
+\begin{itemize}
+    \item Loading RRK weights: 1--2GB, standard for small LMs
+    \item Streaming engrams from storage: Network I/O, implementation-dependent
+\end{itemize}
+
+\textbf{Value}: Eliminates compounding latency from graph traversal. Enables serverless agent architectures.
+
+\subsection{Configurable Temporal Bias}
+
+\textbf{Claim}: The radial decay function encodes a ``forgetting curve'' as intrinsic topology rather than extrinsic filtering.
+
+\textbf{Tuning}: Parameter $\gamma$ in $r_k = (1+k)^{-\gamma}$ controls decay:
+\begin{itemize}
+    \item Customer service: $\gamma = 2$ (aggressive decay, recent policies)
+    \item Legal research: $\gamma = 0.5$ (slow decay, centuries of precedent)
+\end{itemize}
+
+%=============================================================================
+\section{Limitations and Anti-Patterns}
+\label{sec:limits}
+%=============================================================================
+
+GMM is \textbf{not} appropriate for all applications.
+
+\subsection{Storage Overhead}
+
+\textbf{Cost}: Every engram is persisted. Storage grows $\bigO(N)$ with experience, unlike weight-based models where knowledge is compressed into fixed parameters.
+
+\textbf{Estimate}: $10^6$ engrams $\times$ 4KB average $\approx$ 4GB storage.
+
+\subsection{Operational Complexity}
+
+GMM requires managing: embedding service, storage backend, cache layer, RRK deployment, manifold versioning. This is significantly more complex than stateless LLM inference.
+
+\subsection{Anti-Patterns}
+
+\begin{enumerate}
+    \item \textbf{High-frequency, low-stakes}: FAQ bots don't need persistent memory
+    \item \textbf{Ultra-low latency}: 50ms retrieval exceeds robotics/HFT budgets
+    \item \textbf{Privacy-first contexts}: Total retention conflicts with ``right to be forgotten''
+    \item \textbf{Rapidly evolving domains}: Immutable engrams become stale baggage
+\end{enumerate}
+
+%=============================================================================
+\section{Validation Roadmap}
+\label{sec:validation}
+%=============================================================================
+
+We propose a phased validation strategy. Each phase has explicit success criteria and failure modes.
+
+\subsection{Phase 0: Epistemic Gap Detection (3--6 months)}
+
+\textbf{Goal}: Prove small models can reliably learn when to signal retrieval.
+
+\textbf{Method}:
+\begin{itemize}
+    \item Train RRK (Qwen 2.5 0.5B or Phi-3 Mini 3.8B) on masked context dataset
+    \item 50\% samples: full context (should NOT signal)
+    \item 50\% samples: answer-relevant sentences masked (SHOULD signal)
+\end{itemize}
+
+\textbf{Success criteria}:
+\begin{itemize}
+    \item Precision $\geq 90\%$ (doesn't hallucinate when info present)
+    \item Recall $\geq 90\%$ (signals when info missing)
+    \item Stable training with $\lambda \in [0.3, 0.7]$
+\end{itemize}
+
+\textbf{Failure mode}: If small models cannot learn this, GMM offers no advantage over standard RAG.
+
+\subsection{Phase 1: Synthetic Benchmarks (2--3 months)}
+
+\textbf{Goal}: Empirically measure retrieval speedup vs. HNSW.
+
+\textbf{Method}: ``Needle in the Spiral'' benchmark
+\begin{itemize}
+    \item Insert passkey at random depth $k$ in manifolds of size $10^3, 10^4, 10^5, 10^6$
+    \item Measure Time-to-First-Token (TTFT)
+    \item Compare GMM vs. HNSW baseline
+\end{itemize}
+
+\textbf{Success criteria}:
+\begin{itemize}
+    \item GMM TTFT grows slower than HNSW with $N$
+    \item Recall@1 $\geq 95\%$
+\end{itemize}
+
+\subsection{Phase 2: Domain Deployment (6--12 months)}
+
+\textbf{Goal}: Demonstrate auditability value in high-stakes domain.
+
+\textbf{Method}: Pilot in legal document analysis or medical diagnosis support. Instrument retrieval paths for compliance audits.
+
+\textbf{Success criteria}:
+\begin{itemize}
+    \item $10\times$ reduction in audit preparation time
+    \item Zero ``unexplainable retrieval'' incidents
+\end{itemize}
+
+\subsection{Phase 3: Multi-Agent Composition (6--12 months)}
+
+\textbf{Goal}: Validate manifold merging without catastrophic interference.
+
+\textbf{Method}: Train Agent A (contract law) and Agent B (patent law). Mount both to unified RRK. Test on cross-domain queries.
+
+\textbf{Success criteria}:
+\begin{itemize}
+    \item Composed accuracy $\geq 90\%$ of specialist agents
+    \item Correct provenance attribution
+\end{itemize}
+
+%=============================================================================
+\section{Open Questions}
+\label{sec:open}
+%=============================================================================
+
+\begin{openquestion}[True O(log N) Retrieval]
+\label{oq:logn}
+Can hierarchical GMM achieve $\bigO(\log N)$ retrieval via recursive layers (L3, L4, ...) with learned routing? What are the trade-offs between depth, branching factor, and accuracy?
+\end{openquestion}
+
+\begin{openquestion}[Optimal Decay Functions]
+Is polynomial decay $(1+k)^{-\gamma}$ universally optimal? How do exponential, hyperbolic, and piecewise functions compare across domains?
+\end{openquestion}
+
+\begin{openquestion}[Entropy Proxies]
+What cheap proxy best approximates attention entropy for reification gating? Does output perplexity suffice, or is a learned classifier necessary?
+\end{openquestion}
+
+\begin{openquestion}[Multi-Modal Engrams]
+How can GMM extend to images, audio, and video? What embedding spaces preserve geometric structure across modalities?
+\end{openquestion}
+
+\begin{openquestion}[Adversarial Robustness]
+Can attackers inject ``poison engrams'' to bias retrieval? What defenses exist beyond cryptographic signing?
+\end{openquestion}
+
+%=============================================================================
+\section{Conclusion}
+\label{sec:conclusion}
+%=============================================================================
+
+\subsection{Summary of Contributions}
+
+This position paper contributes:
+\begin{enumerate}
+    \item \textbf{Formal framework}: Rigorous definitions and complexity proofs for GMM (Section~\ref{sec:formal})
+    \item \textbf{Honest assessment}: Correction of overclaimed complexity bounds (Corollary~\ref{cor:linear})
+    \item \textbf{Validation roadmap}: Concrete phases with success criteria and failure modes (Section~\ref{sec:validation})
+    \item \textbf{Research agenda}: Open questions for the community (Section~\ref{sec:open})
+\end{enumerate}
+
+\subsection{The Fundamental Question}
+
+Context windows will reach 10 million tokens---they already are. The question is whether \textbf{raw capacity} suffices for deployed agency, or whether we need \textbf{architectural structure} for auditability, compositionality, and long-horizon coherence.
+
+We argue the latter. Just as databases impose structure (tables, indices, constraints) on raw bytes for reliability and query efficiency, GMM proposes geometric structure on semantic memory for the same reasons.
+
+\subsection{Call to Action}
+
+This is a research agenda, not a solved problem. We invite:
+\begin{itemize}
+    \item \textbf{Empiricists}: Validate Phase 0 (epistemic gap detection) as the critical gate
+    \item \textbf{Theorists}: Achieve true $\bigO(\log N)$ retrieval via recursive hierarchy
+    \item \textbf{Practitioners}: Identify domains where auditability justifies architectural complexity
+\end{itemize}
+
+The future of AI memory may not be infinite context---it may be \emph{structured memory}.
+
+%=============================================================================
+% BIBLIOGRAPHY
+%=============================================================================
+\bibliographystyle{plainnat}
+\begin{thebibliography}{99}
+
+\bibitem[Beltagy et al.(2020)]{beltagy2020longformer}
+Beltagy, I., Peters, M.~E., and Cohan, A. (2020).
+\newblock Longformer: The long-document transformer.
+\newblock \emph{arXiv preprint arXiv:2004.05150}.
+
+\bibitem[Borgeaud et al.(2022)]{borgeaud2022improving}
+Borgeaud, S., et al. (2022).
+\newblock Improving language models by retrieving from trillions of tokens.
+\newblock In \emph{ICML}.
+
+\bibitem[Child et al.(2019)]{child2019sparse}
+Child, R., Gray, S., Radford, A., and Sutskever, I. (2019).
+\newblock Generating long sequences with sparse transformers.
+\newblock \emph{arXiv preprint arXiv:1904.10509}.
+
+\bibitem[Graves et al.(2014)]{graves2014neural}
+Graves, A., Wayne, G., and Danihelka, I. (2014).
+\newblock Neural Turing machines.
+\newblock \emph{arXiv preprint arXiv:1410.5401}.
+
+\bibitem[Graves et al.(2016)]{graves2016hybrid}
+Graves, A., et al. (2016).
+\newblock Hybrid computing using a neural network with dynamic external memory.
+\newblock \emph{Nature}, 538(7626):471--476.
+
+\bibitem[Kuipers and Niederreiter(1974)]{kuipers1974uniform}
+Kuipers, L. and Niederreiter, H. (1974).
+\newblock \emph{Uniform Distribution of Sequences}.
+\newblock Wiley-Interscience.
+
+\bibitem[Lewis et al.(2020)]{lewis2020retrieval}
+Lewis, P., et al. (2020).
+\newblock Retrieval-augmented generation for knowledge-intensive NLP tasks.
+\newblock In \emph{NeurIPS}.
+
+\bibitem[Niederreiter(1992)]{niederreiter1992random}
+Niederreiter, H. (1992).
+\newblock \emph{Random Number Generation and Quasi-Monte Carlo Methods}.
+\newblock SIAM.
+
+\bibitem[Packer et al.(2023)]{packer2023memgpt}
+Packer, C., Fang, V., Patil, S.~G., Lin, K., Wooders, S., and Gonzalez, J.~E. (2023).
+\newblock MemGPT: Towards LLMs as operating systems.
+\newblock \emph{arXiv preprint arXiv:2310.08560}.
+
+\bibitem[Park et al.(2023)]{park2023generative}
+Park, J.~S., et al. (2023).
+\newblock Generative agents: Interactive simulacra of human behavior.
+\newblock In \emph{UIST}.
+
+\bibitem[Tulving(1985)]{tulving1985memory}
+Tulving, E. (1985).
+\newblock Memory and consciousness.
+\newblock \emph{Canadian Psychology}, 26(1):1--12.
+
+\bibitem[Winitzki(2008)]{winitzki2008uniform}
+Winitzki, S. (2008).
+\newblock A handy approximation for the error function and its inverse.
+\newblock Lecture note, available online.
+
+\bibitem[Zaheer et al.(2020)]{zaheer2020big}
+Zaheer, M., et al. (2020).
+\newblock Big Bird: Transformers for longer sequences.
+\newblock In \emph{NeurIPS}.
+
+\end{thebibliography}
+
+%=============================================================================
+% APPENDICES
+%=============================================================================
+\appendix
+
+\section{Comparison Matrix}
+\label{app:comparison}
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{@{}lccc@{}}
+\toprule
+\textbf{Feature} & \textbf{Standard LLM} & \textbf{Vector DB (RAG)} & \textbf{GMM} \\
+\midrule
+Learning & Gradient descent & Append + index & Append to spiral \\
+Auditability & Low (black box) & Medium (stochastic) & High (geometric)$^\dagger$ \\
+Unlearning & Retrain (expensive) & Re-index ($\bigO(N \log N)$) & Excise node$^\ddagger$ \\
+Composition & Impossible & Hard (merge indices) & Possible$^\S$ \\
+Cold Start & Fast & Slow (load index) & Medium$^\|$ \\
+Storage & Low (compressed) & Medium (vectors) & High (all engrams) \\
+Temporal Reasoning & None & Metadata tag & Geometric coordinate \\
+\bottomrule
+\end{tabular}
+\caption{Comparison of memory architectures. $^\dagger$Geometric position auditable; embedding logic remains opaque. $^\ddagger$Requires handling coherence gaps. $^\S$Requires shared embedding models. $^\|$Index-free but requires RRK loading.}
+\label{tab:comparison}
+\end{table}
+
+\section{Cost Model Example}
+\label{app:cost}
+
+\textbf{Scenario}: Legal research assistant with 5 years of operation.
+
+\begin{itemize}
+    \item \textbf{Engrams}: $\sim 10^6$ interactions $\to$ 50GB storage (S3: \$1.15/month)
+    \item \textbf{RRK}: Phi-3 Mini 3.8B $\to$ 7.6GB weights $\to$ 0.5s load time
+    \item \textbf{Cache}: 100MB Redis (\$10/month)
+    \item \textbf{Compute}: 2--3 requests/sec $\to$ 1 GPU (\$1--2/hour on-demand)
+\end{itemize}
+
+\textbf{Total}: $\sim$\$50/month base + compute as used.
+
+\textbf{Comparison}: GPT-4 with 1M context $\sim$\$60/million input tokens. GMM becomes cost-competitive at $>$1000 requests/month for long-context tasks.
+
+\section{Notation Summary}
+\label{app:notation}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Symbol} & \textbf{Meaning} \\
+\midrule
+$N$ & Total number of engrams \\
+$d$ & Embedding dimension \\
+$\sphere^{d-1}$ & Unit hypersphere in $\R^d$ \\
+$\phi(k) = (\mathbf{u}_k, r_k)$ & Coordinate function \\
+$\alpha = (\sqrt{p_1}, \ldots)$ & Irrational basis (square roots of primes) \\
+$\gamma$ & Polynomial decay exponent \\
+$\beta_1, \beta_2$ & Layer compression factors \\
+$k_{\text{fovea}}$ & Foveal boundary \\
+$\entropy(A_t)$ & Attention entropy \\
+$\lambda$ & Signal loss weight \\
+\bottomrule
+\end{tabular}
+\caption{Notation used throughout this paper.}
+\end{table}
+
+\end{document}
