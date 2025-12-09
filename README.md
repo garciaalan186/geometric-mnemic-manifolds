@@ -12,7 +12,7 @@
 
 This repository contains the position paper proposing a novel architecture for simulating **autonoetic memory** in AI systems using geometric manifolds.
 
-**Paper**: [`docs/paper/geometric_mnemic_manifolds_v22.tex`](docs/paper/geometric_mnemic_manifolds_v22.tex)
+**Paper**: [`docs/paper/gmm_position_paper_v3.0.tex`](docs/paper/gmm_position_paper_v3.0.tex) | [PDF](docs/paper/gmm_position_paper_v3.0.pdf)
 
 ## 📋 Abstract
 
@@ -58,7 +58,9 @@ Unlike standard RAG systems which optimize solely for semantic relevance, this a
 
 ## 📖 Contents
 
-- **Position Paper**: [`docs/paper/geometric_mnemic_manifolds_v22.tex`](docs/paper/geometric_mnemic_manifolds_v22.tex)
+- **Position Paper**:
+  - LaTeX Source: [`docs/paper/gmm_position_paper_v3.0.tex`](docs/paper/gmm_position_paper_v3.0.tex)
+  - PDF: [`docs/paper/gmm_position_paper_v3.0.pdf`](docs/paper/gmm_position_paper_v3.0.pdf)
 - **Citations**: Machine-readable citation metadata in `docs/citations/`
 
 ---
