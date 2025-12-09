@@ -1,0 +1,81 @@
+# World Generation Configuration for Stage A (Biographical Worlds)
+
+world:
+  # Number of worlds to generate
+  num_worlds: 10
+
+  # Random seed base (each world gets seed + world_id)
+  seed_base: 42
+
+  # Entity counts per world
+  entities:
+    num_places: 20
+    num_organizations: 15
+    num_people: 50
+    num_objects: 30
+    num_events: 25
+
+  # Name generation
+  names:
+    syllables_min: 2
+    syllables_max: 3
+    phonotactic_patterns:
+      onsets: ['b', 't', 'm', 'r', 'n', 'v', 'k', 's', 'l', 'd', 'p', 'f', 'g', 'h']
+      nuclei: ['a', 'e', 'i', 'o', 'u', 'ai', 'au', 'ei', 'ou']
+      codas: ['', 'n', 'l', 'r', 's', 't', 'k', 'th', 'nd', 'rt']
+
+  # Fact generation
+  facts:
+    # Number of fact templates per (entity_type, attribute/relation)
+    templates_per_type: 3
+    # Paraphrase variation probability
+    paraphrase_prob: 0.3
+
+  # Question generation
+  questions:
+    # Number of question templates per (entity_type, attribute/relation)
+    templates_per_type: 3
+    # Samples per fact (gap + no-gap pairs)
+    samples_per_fact: 2
+
+  # Sample difficulty tiers
+  difficulty:
+    easy:
+      num_distractors_min: 1
+      num_distractors_max: 2
+      paraphrase: false
+      near_miss_facts: false
+      weight: 0.3  # 30% of samples
+
+    medium:
+      num_distractors_min: 3
+      num_distractors_max: 5
+      paraphrase: true
+      near_miss_facts: false
+      weight: 0.5  # 50% of samples
+
+    hard:
+      num_distractors_min: 5
+      num_distractors_max: 8
+      paraphrase: true
+      near_miss_facts: true
+      weight: 0.2  # 20% of samples
+
+# Data splits
+splits:
+  train_ratio: 0.7
+  val_ratio: 0.15
+  test_ratio: 0.15
+
+  # Minimum samples per split
+  min_train_samples: 35000
+  min_val_samples: 7500
+  min_test_samples: 7500
+
+  # Target total samples
+  target_samples: 70000  # 50k train, 10k val, 10k test
+
+# Output paths
+output:
+  worlds_dir: "data/worlds/biographical"
+  splits_dir: "data/splits/stage_a"

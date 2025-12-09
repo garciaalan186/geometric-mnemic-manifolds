@@ -1,0 +1,68 @@
+# Model Configuration for Phase 0 Epistemic Gap Detection
+
+models:
+  primary:
+    name: "Qwen/Qwen2.5-0.5B-Instruct"
+    description: "Smallest viable model for rapid iteration"
+    max_length: 2048
+    dtype: "bfloat16"
+    device_map: "auto"
+
+  secondary:
+    name: "Qwen/Qwen2.5-1.5B-Instruct"
+    description: "Fallback if 0.5B shows insufficient capacity"
+    max_length: 2048
+    dtype: "bfloat16"
+    device_map: "auto"
+
+  tertiary:
+    name: "microsoft/Phi-3-mini-4k-instruct"
+    description: "Upper bound at 3.8B parameters"
+    max_length: 4096
+    dtype: "bfloat16"
+    device_map: "auto"
+
+# Special tokens
+special_tokens:
+  signal_bus: "<SIGNAL_BUS>"
+  pad_token: "<|endoftext|>"
+
+# Prompt template
+prompt:
+  system_message: |
+    You are a precise question-answering system operating in a synthetic world.
+    Answer questions using ONLY the provided context. Do not use any real-world knowledge.
+    If the context does not contain sufficient information to answer the question,
+    respond with exactly: <SIGNAL_BUS>
+
+  template: |
+    <|system|>
+    {system_message}
+    <|end|>
+    <|user|>
+    Context:
+    {context}
+
+    Question: {question}
+    <|end|>
+    <|assistant|>
+
+# LoRA configuration
+lora:
+  r: 16
+  lora_alpha: 32
+  lora_dropout: 0.05
+  target_modules:
+    - "q_proj"
+    - "v_proj"
+    - "k_proj"
+    - "o_proj"
+  bias: "none"
+  task_type: "CAUSAL_LM"
+
+# Quantization
+quantization:
+  load_in_4bit: true
+  bnb_4bit_compute_dtype: "bfloat16"
+  bnb_4bit_quant_type: "nf4"
+  bnb_4bit_use_double_quant: true
