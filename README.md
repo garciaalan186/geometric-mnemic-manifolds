@@ -2,144 +2,112 @@
 
 **Toward Structured Memory Architectures for Persistent AI Agency**
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.XXXXXXX.svg)](https://doi.org/10.5281/zenodo.XXXXXXX)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17849006.svg)](https://doi.org/10.5281/zenodo.17849006)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![arXiv](https://img.shields.io/badge/arXiv-XXXX.XXXXX-b31b1b.svg)](https://arxiv.org/abs/XXXX.XXXXX)
 
 **Alan Garcia** | December 2025 | Version 3.0
 
 ---
 
-## 📄 Position Paper
+## Overview
 
-This repository contains the position paper proposing a novel architecture for simulating **autonoetic memory** in AI systems using geometric manifolds.
+This repository presents the **Geometric Mnemic Manifold (GMM)**, a proposed memory architecture for large language models with formal complexity proofs, honest assessment of limitations, and a concrete validation roadmap. This is a **position paper** framing GMM as a research agenda, not a proven solution.
 
-**Paper**: [`docs/paper/gmm_position_paper_v3.0.tex`](docs/paper/gmm_position_paper_v3.0.tex) | [PDF](docs/paper/gmm_position_paper_v3.0.pdf)
+**📄 Paper**: [LaTeX Source](docs/paper/gmm_position_paper_v3.0.tex) | [PDF](docs/paper/gmm_position_paper_v3.0.pdf)
 
-## 📋 Abstract
-
-**Status: Theoretical Specification.** This repository presents the **Geometric Mnemic Manifold (GMM)**, a proposed memory architecture for large language models that externalizes the Key-Value cache to a distributed store with geometrically enforced sparse attention. The paper provides formal complexity proofs for coordinate addressing (O(1)), hierarchical retrieval (O(N/β)), and active edge bounds.
-
-Crucially, we distinguish **proven properties** from **conjectured benefits**, identify critical validation gates, and frame GMM as a **research agenda** rather than a proven solution. The core innovations—entropy-gated reification, polynomial temporal decay, and Kronecker-sequence addressing—are presented with mathematical rigor where possible and honest acknowledgment of open problems where not.
-
-We argue that the fundamental question facing AI memory systems is not capacity but **structure**: whether raw context windows suffice for deployed agency or whether architectural organization is necessary for auditability, compositionality, and long-horizon coherence.
-
-**Keywords**: Memory Systems, Geometric Topology, Autonoetic Memory, RAG Systems, Kronecker Sequences, Hierarchical Compression, Deterministic Addressing, Research Agenda
+**🌐 Interactive Explainer**: [Explore the Architecture](docs/explainer/index.html)
 
 ---
 
-## 🎯 Key Contributions
+## The Core Idea
 
-1. **Formal Framework**: Rigorous definitions and complexity proofs for GMM architecture
-2. **Honest Assessment**: Correction of overclaimed complexity bounds (acknowledges linear active edges, not O(1))
-3. **Validation Roadmap**: Concrete phases with success criteria and failure modes (Phase 0-3)
-4. **Entropy-Gated Reification**: Information-theoretic criterion for memory persistence
-5. **Geometric Temporal Encoding**: Time as radial coordinate with polynomial decay
-6. **O(1) Analytical Addressing**: Provably constant-time coordinate calculation via Kronecker sequences
-7. **Research Agenda**: Open questions for the community with clear epistemic boundaries
+Current AI memory systems face a choice: extend context windows indefinitely or impose structure. We argue for **structured memory**—separating fluid reasoning (the kernel) from crystallized knowledge (the manifold) with geometric organization enabling formal guarantees.
+
+**Key Innovation**: Memory addresses computed analytically via Kronecker sequences on a hypersphere, eliminating index loading while preserving deterministic retrieval paths for auditability.
 
 ---
 
-## 📚 Citation
+## What's Proven vs. Conjectured
 
-**Cite this work**:
+### ✅ Mathematically Proven
+- O(1) coordinate calculation via Kronecker sequences
+- Low-discrepancy angular coverage (O((log N)^d / N))
+- Active edge growth: O(N) with 1/1024 constant factor improvement
+
+### 🤔 Conjectured (Requires Validation)
+- Auditability benefits from deterministic geometry
+- Compositionality via shared coordinate space
+- Efficiency gains over HNSW in practice
+
+### 🔬 Critical Validation Gate: Phase 0
+**Question**: Can small LMs (0.5B-3.8B) learn to detect epistemic gaps reliably?
+- **Success**: Precision/Recall ≥90% → GMM viable
+- **Failure**: <70% → Fundamental limitation, requires rethinking
+
+---
+
+## Repository Contents
+
+This repository contains **only the position paper**. Experimental validation code is maintained separately:
+
+- **Position Paper** (this repo): Theoretical framework, formal proofs, research agenda
+- **Phase 0 Experiment** (separate branch): Epistemic gap detection validation
+
+---
+
+## Citation
+
 ```bibtex
 @techreport{garcia2025geometric,
   author       = {Garcia, Alan},
-  title        = {{Geometric Mnemic Manifolds: A Foveated Architecture
-                   for Autonoetic Memory in LLMs}},
+  title        = {{Geometric Mnemic Manifolds: A Position Paper}},
+  subtitle     = {{Toward Structured Memory Architectures for Persistent AI Agency}},
   year         = 2025,
   month        = dec,
+  version      = {3.0},
   type         = {Position Paper},
   institution  = {Independent Research},
-  doi          = {10.5281/zenodo.XXXXXXX},
+  doi          = {10.5281/zenodo.17849006},
   url          = {https://github.com/garciaalan186/geometric-mnemic-manifolds}
 }
 ```
 
-**Alternative citation formats**: See [`docs/citations/CITATION.cff`](docs/citations/CITATION.cff) and [`docs/citations/CITATION.bib`](docs/citations/CITATION.bib)
+**Alternative formats**: [CITATION.cff](docs/citations/CITATION.cff) | [CITATION.bib](docs/citations/CITATION.bib)
 
 ---
 
-## 📖 Contents
+## v3.0 Highlights
 
-- **Position Paper**: [`docs/paper/gmm_position_paper_v3.0.tex`](docs/paper/gmm_position_paper_v3.0.tex) | [PDF](docs/paper/gmm_position_paper_v3.0.pdf)
-- **Citations**: Machine-readable citation metadata in `docs/citations/`
-
-## ✨ What's New in v3.0
-
-Version 3.0 represents a major revision with increased rigor and honesty:
-
-- **Formal Complexity Proofs**: Rigorous theorems for O(1) addressing, O(N/β) retrieval, and linear active edges
-- **Corrected Claims**: Honest acknowledgment that active edges grow O(N), not O(1) as previously claimed
-- **Explicit Validation Gates**: Four-phase roadmap with concrete success/failure criteria
-- **Epistemic Boundaries**: Clear distinction between proven mathematics, conjectures, and unvalidated assumptions
-- **Open Questions**: Identified research challenges (true O(log N) retrieval, entropy proxies, multi-modal extensions)
-- **Research Agenda Framing**: Positioned as a call to action for the community, not a solved problem
-- **Limitations Section**: Honest assessment of anti-patterns and operational complexity
-
-**Previous versions** (v1.x-v2.2) are archived in `docs/archive/` for historical reference.
+Version 3.0 prioritizes rigor and honesty:
+- Formal complexity proofs (15+ theorems)
+- Corrected overclaims (O(N) active edges, not O(1))
+- Four-phase validation roadmap with success/failure criteria
+- Clear epistemic boundaries (proven vs. conjectured vs. unvalidated)
+- Honest limitations and anti-patterns
 
 ---
 
-## 🔬 Status & Epistemic Clarity
+## The Fundamental Question
 
-This is a **position paper** presenting a research agenda. We distinguish:
+*Is the future of AI memory infinite context windows, or structured memory?*
 
-- **Proven**: Mathematical properties of the geometric construction (coordinate addressing, low-discrepancy coverage)
-- **Conjectured**: Benefits for AI systems (auditability, compositionality, efficiency gains)
-- **Unvalidated**: Whether the architecture works in practice (requires empirical testing)
-
-**We have not built a production system.** The value of this paper lies in:
-1. Formalizing the mathematical framework
-2. Identifying critical validation gates
-3. Stimulating research in structured memory for AI
-
-## 🛤️ Validation Roadmap
-
-The paper proposes a phased validation strategy with explicit success/failure criteria:
-
-### Phase 0: Epistemic Gap Detection (3-6 months) - **CRITICAL GATE**
-- **Goal**: Prove small models can reliably learn when to signal retrieval
-- **Success Criteria**: Precision ≥90%, Recall ≥90%
-- **Failure Mode**: If small models cannot learn this, GMM offers no advantage over standard RAG
-
-### Phase 1: Synthetic Benchmarks (2-3 months)
-- **Goal**: Empirically measure retrieval speedup vs. HNSW
-- **Method**: "Needle in the Spiral" benchmark across manifold sizes
-
-### Phase 2: Domain Deployment (6-12 months)
-- **Goal**: Demonstrate auditability value in high-stakes domains
-- **Target**: Legal document analysis or medical diagnosis support
-
-### Phase 3: Multi-Agent Composition (6-12 months)
-- **Goal**: Validate manifold merging without catastrophic interference
-- **Method**: Mount multiple specialized manifolds to unified RRK
+We argue for the latter and provide a rigorous framework to investigate that hypothesis. Whether GMM specifically succeeds or fails, the question demands empirical investigation.
 
 ---
 
-## 📦 Archiving
+## License
 
-This repository is archived on Zenodo for permanent citation and preservation.
-
-**Zenodo Metadata**: [`docs/citations/.zenodo.json`](docs/citations/.zenodo.json)
+MIT License - See [LICENSE](LICENSE)
 
 ---
 
-## 📄 License
+## Contact
 
-MIT License - See [LICENSE](LICENSE) file for details
-
----
-
-## 📧 Contact
-
-- **Issues**: [GitHub Issues](https://github.com/garciaalan186/geometric-mnemic-manifolds/issues)
-- **Email**: your.email@example.com
-- **ORCID**: [0000-0000-0000-0000](https://orcid.org/0000-0000-0000-0000)
+- **GitHub Issues**: [Report issues or ask questions](https://github.com/garciaalan186/geometric-mnemic-manifolds/issues)
+- **Email**: alan.javier.garcia@gmail.com
 
 ---
 
-**"What I cannot create, I do not understand."** - Richard Feynman
+*"What I cannot create, I do not understand."* — Richard Feynman
 
-*This position paper is dedicated to advancing theoretical foundations of memory systems in artificial intelligence.*
+*Advancing theoretical foundations of structured memory in artificial intelligence.*
