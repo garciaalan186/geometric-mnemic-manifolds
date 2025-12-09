@@ -1,9 +1,10 @@
 {
-  "title": "Geometric Mnemic Manifolds: A Foveated Architecture for Autonoetic Memory in LLMs",
-  "description": "A novel architecture for simulating the functional dynamics of autonoetic memory in AI systems. This system departs from the industry standard of stochastic Vector Databases by introducing the Geometric Mnemic Manifold, where a Recursive Reasoning Kernel (RRK) acts as a fluid reasoning engine, offloading long-term memory to a distributed graph of immutable Engrams organized along a deterministic, low-discrepancy trajectory utilizing Kronecker sequences.",
-  "version": "1.0.0",
-  "upload_type": "software",
-  "publication_date": "2025-12-07",
+  "title": "Geometric Mnemic Manifolds: A Position Paper - Toward Structured Memory Architectures for Persistent AI Agency",
+  "description": "A position paper presenting the Geometric Mnemic Manifold (GMM), a proposed memory architecture for large language models with formal complexity proofs, honest assessment of claims, and a concrete validation roadmap. This work distinguishes proven mathematical properties from conjectures, identifies critical validation gates, and frames GMM as a research agenda rather than a proven solution. Version 3.0 emphasizes epistemic clarity, corrects overclaimed complexity bounds, and provides a four-phase experimental roadmap for empirical validation.",
+  "version": "3.0",
+  "upload_type": "publication",
+  "publication_type": "workingpaper",
+  "publication_date": "2025-12-08",
   "creators": [
     {
       "name": "Garcia, Alan",
@@ -18,15 +19,18 @@
     "memory systems",
     "geometric topology",
     "autonoetic memory",
-    "vector databases",
     "RAG systems",
     "Kronecker sequences",
     "hierarchical compression",
-    "O(1) retrieval",
+    "deterministic addressing",
     "machine learning",
-    "LLMs",
-    "episodic memory",
-    "temporal reasoning"
+    "large language models",
+    "epistemic gap detection",
+    "research agenda",
+    "position paper",
+    "formal complexity analysis",
+    "recursive reasoning kernel",
+    "structured memory"
   ],
   "related_identifiers": [
     {
