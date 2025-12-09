@@ -6,9 +6,9 @@ title: >-
   Geometric Mnemic Manifolds: A Foveated Architecture for
   Autonoetic Memory in LLMs
 message: >-
-  If you use this software or reference this research,
+  If you reference this position paper,
   please cite it using the metadata from this file.
-type: software
+type: article
 authors:
   - given-names: Alan
     family-names: Garcia
@@ -39,5 +39,5 @@ keywords:
   - O(1) retrieval
   - machine learning
 license: MIT
-version: 1.0.0
-date-released: '2025-12-07'
+version: 0.1.0-alpha
+date-released: '2025-12-09'
