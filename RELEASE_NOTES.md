@@ -1,7 +1,7 @@
 # Geometric Mnemic Manifolds v3.0 - Release Notes
 
 **Release Date**: December 2025
-**DOI**: 10.5281/zenodo.XXXXXXX
+**DOI**: 10.5281/zenodo.17849006
 **Type**: Position Paper
 **Status**: Theoretical Specification
 
@@ -126,7 +126,7 @@ If you use or reference this work, please cite:
   version      = {3.0},
   type         = {Position Paper},
   institution  = {Independent Research},
-  doi          = {10.5281/zenodo.XXXXXXX},
+  doi          = {10.5281/zenodo.17849006},
   url          = {https://github.com/garciaalan186/geometric-mnemic-manifolds}
 }
 ```
