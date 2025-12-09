@@ -2,7 +2,7 @@
 
 **Toward Structured Memory Architectures for Persistent AI Agency**
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.XXXXXXX.svg)](https://doi.org/10.5281/zenodo.XXXXXXX)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17849006.svg)](https://doi.org/10.5281/zenodo.17849006)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![arXiv](https://img.shields.io/badge/arXiv-XXXX.XXXXX-b31b1b.svg)](https://arxiv.org/abs/XXXX.XXXXX)
 
@@ -52,7 +52,7 @@ We argue that the fundamental question facing AI memory systems is not capacity 
   month        = dec,
   type         = {Position Paper},
   institution  = {Independent Research},
-  doi          = {10.5281/zenodo.XXXXXXX},
+  doi          = {10.5281/zenodo.17849006},
   url          = {https://github.com/garciaalan186/geometric-mnemic-manifolds}
 }
 ```
