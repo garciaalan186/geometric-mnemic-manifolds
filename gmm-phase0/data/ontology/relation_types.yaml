@@ -1,0 +1,322 @@
+# Fact and Question Templates for Synthetic Biographical Worlds
+
+# Each entry maps (entity_type, attribute/relation) to natural language templates
+
+fact_templates:
+  person:
+    birth_year:
+      - "{name} was born in the year {value}."
+      - "The birth year of {name} is {value}."
+      - "{name} came into the world in {value}."
+      - "In {value}, {name} was born."
+
+    death_year:
+      - "{name} died in the year {value}."
+      - "The death year of {name} is {value}."
+      - "{name} passed away in {value}."
+      - "In {value}, {name} died."
+
+    occupation:
+      - "{name} works as a {value}."
+      - "{name} is a {value} by profession."
+      - "The occupation of {name} is {value}."
+      - "{name} practices the trade of {value}."
+
+    birthplace:
+      - "{name} was born in {value}."
+      - "{name} hails from {value}."
+      - "The birthplace of {name} is {value}."
+      - "{value} is where {name} was born."
+
+    works_at:
+      - "{name} is employed by {value}."
+      - "{name} works at {value}."
+      - "{name} serves {value}."
+      - "The employer of {name} is {value}."
+
+    lives_in:
+      - "{name} lives in {value}."
+      - "{name} resides in {value}."
+      - "The residence of {name} is {value}."
+      - "{value} is home to {name}."
+
+    married_to:
+      - "{name} is married to {value}."
+      - "{name} and {value} are spouses."
+      - "The spouse of {name} is {value}."
+      - "{value} is the partner of {name}."
+
+    child_of:
+      - "{name} is the child of {value}."
+      - "{value} is the parent of {name}."
+      - "The parent of {name} is {value}."
+      - "{name} was born to {value}."
+
+    apprentice_of:
+      - "{name} is the apprentice of {value}."
+      - "{value} is the mentor of {name}."
+      - "The mentor of {name} is {value}."
+      - "{name} studies under {value}."
+
+  organization:
+    founded_year:
+      - "{name} was founded in {value}."
+      - "The founding year of {name} is {value}."
+      - "{name} was established in the year {value}."
+      - "In {value}, {name} was founded."
+
+    dissolved_year:
+      - "{name} was dissolved in {value}."
+      - "The dissolution year of {name} is {value}."
+      - "{name} ceased operations in {value}."
+      - "In {value}, {name} was dissolved."
+
+    headquarters:
+      - "{name} is headquartered in {value}."
+      - "The headquarters of {name} is located in {value}."
+      - "{name} operates from {value}."
+      - "{value} houses the headquarters of {name}."
+
+    org_type:
+      - "{name} is a {value}."
+      - "The type of organization that {name} is: {value}."
+      - "{name} operates as a {value}."
+
+    founded_by:
+      - "{name} was founded by {value}."
+      - "{value} founded {name}."
+      - "The founder of {name} is {value}."
+      - "{name} was established by {value}."
+
+    subsidiary_of:
+      - "{name} is a subsidiary of {value}."
+      - "{value} owns {name}."
+      - "The parent organization of {name} is {value}."
+
+  place:
+    population:
+      - "{name} has a population of {value}."
+      - "The population of {name} is {value}."
+      - "Approximately {value} people reside in {name}."
+      - "{value} inhabitants live in {name}."
+
+    founded_year:
+      - "{name} was founded in {value}."
+      - "The settlement of {name} was established in {value}."
+      - "{name} was settled in the year {value}."
+      - "In {value}, {name} was founded."
+
+    place_type:
+      - "{name} is a {value}."
+      - "The type of settlement that {name} is: {value}."
+      - "{name} is classified as a {value}."
+
+    region:
+      - "{name} is located in the {value} region."
+      - "{name} is part of {value}."
+      - "The region of {name} is {value}."
+
+    governed_by:
+      - "{name} is governed by {value}."
+      - "{value} governs {name}."
+      - "The governor of {name} is {value}."
+      - "{value} rules over {name}."
+
+  object:
+    created_year:
+      - "The {name} was created in {value}."
+      - "The year of creation for the {name} is {value}."
+      - "In {value}, the {name} was made."
+
+    material:
+      - "The {name} is made of {value}."
+      - "The {name} is crafted from {value}."
+      - "The material of the {name} is {value}."
+
+    object_type:
+      - "The {name} is a {value}."
+      - "The type of object that the {name} is: {value}."
+
+    created_by:
+      - "The {name} was created by {value}."
+      - "{value} crafted the {name}."
+      - "The creator of the {name} is {value}."
+      - "{value} made the {name}."
+
+    owned_by:
+      - "The {name} is owned by {value}."
+      - "{value} owns the {name}."
+      - "The owner of the {name} is {value}."
+
+    located_at:
+      - "The {name} is located in {value}."
+      - "The {name} can be found in {value}."
+      - "The location of the {name} is {value}."
+
+  event:
+    year:
+      - "The {name} occurred in {value}."
+      - "{name} took place in the year {value}."
+      - "The year of the {name} is {value}."
+      - "In {value}, the {name} happened."
+
+    event_type:
+      - "The {name} was a {value}."
+      - "The type of event that the {name} was: {value}."
+
+    occurred_at:
+      - "The {name} occurred in {value}."
+      - "{name} took place at {value}."
+      - "The location of the {name} was {value}."
+      - "{value} was the site of the {name}."
+
+question_templates:
+  person:
+    birth_year:
+      - "When was {name} born?"
+      - "What year was {name} born?"
+      - "In what year was {name} born?"
+      - "What is the birth year of {name}?"
+
+    death_year:
+      - "When did {name} die?"
+      - "What year did {name} die?"
+      - "In what year did {name} pass away?"
+      - "What is the death year of {name}?"
+
+    occupation:
+      - "What is {name}'s occupation?"
+      - "What does {name} do for work?"
+      - "What is the profession of {name}?"
+      - "What trade does {name} practice?"
+
+    birthplace:
+      - "Where was {name} born?"
+      - "What is the birthplace of {name}?"
+      - "Where does {name} come from?"
+      - "In what place was {name} born?"
+
+    works_at:
+      - "Where does {name} work?"
+      - "Who employs {name}?"
+      - "What organization does {name} work for?"
+      - "Where is {name} employed?"
+
+    lives_in:
+      - "Where does {name} live?"
+      - "What is {name}'s place of residence?"
+      - "In what place does {name} reside?"
+
+    married_to:
+      - "Who is {name} married to?"
+      - "Who is the spouse of {name}?"
+      - "What is the name of {name}'s partner?"
+
+    child_of:
+      - "Who is the parent of {name}?"
+      - "Who is {name} the child of?"
+      - "Who gave birth to {name}?"
+
+    apprentice_of:
+      - "Who is {name}'s mentor?"
+      - "Who does {name} study under?"
+      - "Who is the teacher of {name}?"
+
+  organization:
+    founded_year:
+      - "When was {name} founded?"
+      - "What year was {name} established?"
+      - "In what year was {name} founded?"
+
+    dissolved_year:
+      - "When was {name} dissolved?"
+      - "What year did {name} cease operations?"
+      - "When did {name} close?"
+
+    headquarters:
+      - "Where is {name} headquartered?"
+      - "Where is the headquarters of {name}?"
+      - "What is the location of {name}'s headquarters?"
+
+    org_type:
+      - "What type of organization is {name}?"
+      - "What kind of organization is {name}?"
+
+    founded_by:
+      - "Who founded {name}?"
+      - "Who established {name}?"
+      - "Who is the founder of {name}?"
+
+    subsidiary_of:
+      - "What organization owns {name}?"
+      - "Who is the parent organization of {name}?"
+      - "What is {name} a subsidiary of?"
+
+  place:
+    population:
+      - "What is the population of {name}?"
+      - "How many people live in {name}?"
+      - "What is the number of inhabitants in {name}?"
+
+    founded_year:
+      - "When was {name} founded?"
+      - "What year was {name} established?"
+      - "When was {name} settled?"
+
+    place_type:
+      - "What type of settlement is {name}?"
+      - "What kind of place is {name}?"
+
+    region:
+      - "What region is {name} in?"
+      - "What region is {name} part of?"
+
+    governed_by:
+      - "Who governs {name}?"
+      - "Who is the governor of {name}?"
+      - "Who rules {name}?"
+
+  object:
+    created_year:
+      - "When was the {name} created?"
+      - "What year was the {name} made?"
+      - "In what year was the {name} crafted?"
+
+    material:
+      - "What is the {name} made of?"
+      - "What material is the {name}?"
+      - "What is the material of the {name}?"
+
+    object_type:
+      - "What type of object is the {name}?"
+      - "What kind of object is the {name}?"
+
+    created_by:
+      - "Who created the {name}?"
+      - "Who made the {name}?"
+      - "Who crafted the {name}?"
+      - "Who is the creator of the {name}?"
+
+    owned_by:
+      - "Who owns the {name}?"
+      - "Who is the owner of the {name}?"
+
+    located_at:
+      - "Where is the {name} located?"
+      - "Where can the {name} be found?"
+      - "What is the location of the {name}?"
+
+  event:
+    year:
+      - "When did the {name} occur?"
+      - "What year did the {name} take place?"
+      - "In what year did the {name} happen?"
+
+    event_type:
+      - "What type of event was the {name}?"
+      - "What kind of event was the {name}?"
+
+    occurred_at:
+      - "Where did the {name} occur?"
+      - "Where did the {name} take place?"
+      - "What was the location of the {name}?"
