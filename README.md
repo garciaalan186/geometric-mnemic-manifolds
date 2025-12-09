@@ -1,10 +1,12 @@
-# Geometric Mnemic Manifolds: A Foveated Architecture for Autonoetic Memory in LLMs
+# Geometric Mnemic Manifolds: A Position Paper
+
+**Toward Structured Memory Architectures for Persistent AI Agency**
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.XXXXXXX.svg)](https://doi.org/10.5281/zenodo.XXXXXXX)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![arXiv](https://img.shields.io/badge/arXiv-XXXX.XXXXX-b31b1b.svg)](https://arxiv.org/abs/XXXX.XXXXX)
 
-**Alan Garcia** | December 2025
+**Alan Garcia** | December 2025 | Version 3.0
 
 ---
 
@@ -18,22 +20,25 @@ This repository contains the position paper proposing a novel architecture for s
 
 ## 📋 Abstract
 
-We propose a novel architecture for simulating the **functional dynamics of autonoetic memory** in AI systems, departing from the industry standard of stochastic Vector Databases. We introduce the **Geometric Mnemic Manifold**, a system where a **Recursive Reasoning Kernel (RRK)** acts as a fluid reasoning engine, offloading long-term memory to a distributed graph of immutable **Engrams**.
+**Status: Theoretical Specification.** This repository presents the **Geometric Mnemic Manifold (GMM)**, a proposed memory architecture for large language models that externalizes the Key-Value cache to a distributed store with geometrically enforced sparse attention. The paper provides formal complexity proofs for coordinate addressing (O(1)), hierarchical retrieval (O(N/β)), and active edge bounds.
 
-Unlike standard RAG systems which optimize solely for semantic relevance, this architecture organizes engrams along a deterministic, low-discrepancy trajectory utilizing **Kronecker sequences** on the hypersphere. By utilizing **Hierarchical Radial Connectivity** coupled with logarithmic radial expansion, the system achieves a mathematically rigorous **Foveated Memory** effect. This exponential decay of information density allows for **Logarithmic Semantic Traversal (O(log N))** with **Constant Time Addressing (O(1))**, mimicking the biological efficiency of human memory consolidation while solving the "Cold Start" latency problem inherent in graph-based indexing.
+Crucially, we distinguish **proven properties** from **conjectured benefits**, identify critical validation gates, and frame GMM as a **research agenda** rather than a proven solution. The core innovations—entropy-gated reification, polynomial temporal decay, and Kronecker-sequence addressing—are presented with mathematical rigor where possible and honest acknowledgment of open problems where not.
 
-**Keywords**: Artificial Intelligence, Memory Systems, Geometric Topology, Autonoetic Memory, Vector Databases, RAG Systems, Kronecker Sequences, Hierarchical Compression, O(1) Retrieval
+We argue that the fundamental question facing AI memory systems is not capacity but **structure**: whether raw context windows suffice for deployed agency or whether architectural organization is necessary for auditability, compositionality, and long-horizon coherence.
+
+**Keywords**: Memory Systems, Geometric Topology, Autonoetic Memory, RAG Systems, Kronecker Sequences, Hierarchical Compression, Deterministic Addressing, Research Agenda
 
 ---
 
 ## 🎯 Key Contributions
 
-1. **Geometric Temporal Encoding**: Time as a physical coordinate in embedding space
-2. **O(1) Analytical Addressing**: Constant-time memory location via Kronecker sequences
-3. **Foveated Memory Architecture**: Biologically-inspired density decay
-4. **Ephemeral Clone Retrieval**: Computational agents instead of inert text
-5. **Zero-Index Instantiation**: Eliminates cold-start latency
-6. **Hierarchical Skip-List**: Three-layer compression (raw → patterns → abstracts)
+1. **Formal Framework**: Rigorous definitions and complexity proofs for GMM architecture
+2. **Honest Assessment**: Correction of overclaimed complexity bounds (acknowledges linear active edges, not O(1))
+3. **Validation Roadmap**: Concrete phases with success criteria and failure modes (Phase 0-3)
+4. **Entropy-Gated Reification**: Information-theoretic criterion for memory persistence
+5. **Geometric Temporal Encoding**: Time as radial coordinate with polynomial decay
+6. **O(1) Analytical Addressing**: Provably constant-time coordinate calculation via Kronecker sequences
+7. **Research Agenda**: Open questions for the community with clear epistemic boundaries
 
 ---
 
@@ -60,14 +65,58 @@ Unlike standard RAG systems which optimize solely for semantic relevance, this a
 
 ## 📖 Contents
 
-- **Position Paper**: [`docs/paper/geometric_mnemic_manifolds_v22.tex`](docs/paper/geometric_mnemic_manifolds_v22.tex)
+- **Position Paper**: [`docs/paper/gmm_position_paper_v3.0.tex`](docs/paper/gmm_position_paper_v3.0.tex) | [PDF](docs/paper/gmm_position_paper_v3.0.pdf)
 - **Citations**: Machine-readable citation metadata in `docs/citations/`
+
+## ✨ What's New in v3.0
+
+Version 3.0 represents a major revision with increased rigor and honesty:
+
+- **Formal Complexity Proofs**: Rigorous theorems for O(1) addressing, O(N/β) retrieval, and linear active edges
+- **Corrected Claims**: Honest acknowledgment that active edges grow O(N), not O(1) as previously claimed
+- **Explicit Validation Gates**: Four-phase roadmap with concrete success/failure criteria
+- **Epistemic Boundaries**: Clear distinction between proven mathematics, conjectures, and unvalidated assumptions
+- **Open Questions**: Identified research challenges (true O(log N) retrieval, entropy proxies, multi-modal extensions)
+- **Research Agenda Framing**: Positioned as a call to action for the community, not a solved problem
+- **Limitations Section**: Honest assessment of anti-patterns and operational complexity
+
+**Previous versions** (v1.x-v2.2) are archived in `docs/archive/` for historical reference.
 
 ---
 
-## 🔬 Status
+## 🔬 Status & Epistemic Clarity
 
-This is a **position paper** proposing a theoretical architecture. Implementation and empirical validation are left as future work.
+This is a **position paper** presenting a research agenda. We distinguish:
+
+- **Proven**: Mathematical properties of the geometric construction (coordinate addressing, low-discrepancy coverage)
+- **Conjectured**: Benefits for AI systems (auditability, compositionality, efficiency gains)
+- **Unvalidated**: Whether the architecture works in practice (requires empirical testing)
+
+**We have not built a production system.** The value of this paper lies in:
+1. Formalizing the mathematical framework
+2. Identifying critical validation gates
+3. Stimulating research in structured memory for AI
+
+## 🛤️ Validation Roadmap
+
+The paper proposes a phased validation strategy with explicit success/failure criteria:
+
+### Phase 0: Epistemic Gap Detection (3-6 months) - **CRITICAL GATE**
+- **Goal**: Prove small models can reliably learn when to signal retrieval
+- **Success Criteria**: Precision ≥90%, Recall ≥90%
+- **Failure Mode**: If small models cannot learn this, GMM offers no advantage over standard RAG
+
+### Phase 1: Synthetic Benchmarks (2-3 months)
+- **Goal**: Empirically measure retrieval speedup vs. HNSW
+- **Method**: "Needle in the Spiral" benchmark across manifold sizes
+
+### Phase 2: Domain Deployment (6-12 months)
+- **Goal**: Demonstrate auditability value in high-stakes domains
+- **Target**: Legal document analysis or medical diagnosis support
+
+### Phase 3: Multi-Agent Composition (6-12 months)
+- **Goal**: Validate manifold merging without catastrophic interference
+- **Method**: Mount multiple specialized manifolds to unified RRK
 
 ---
 
